@@ -1,0 +1,44 @@
+@if (mediaItem(); as mediaItem) {
+  <div class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+    <div class="relative w-full h-full flex items-center justify-center p-4">
+      <button
+        (click)="closeViewer()"
+        class="cursor-pointer absolute top-4 right-4 text-white text-4xl font-bold z-20"
+      >
+        &times;
+      </button>
+
+      @if (isImage()) {
+        <img
+          [src]="mediaURL()"
+          class="object-contain max-w-full max-h-full rounded-lg"
+          onclick="return false;"
+          (click)="$event.preventDefault(); $event.stopImmediatePropagation()"
+        />
+      } @else if (isVideo()) {
+        <div class="absolute inset-0 flex justify-center items-center">
+          <video
+            #videoPlayer
+            class="max-h-full max-w-full"
+            controls
+            playsinline
+            autoplay
+            loop
+            preload="none"
+          ></video>
+        </div>
+      } @else {
+        <div class="p-8 bg-gray-800 rounded-lg text-center">
+          <p>Unsupported media type: {{ mediaItem.mediaType }}</p>
+          <a
+            [href]="mediaURL()"
+            target="_blank"
+            class="text-purple-400 hover:underline mt-4 inline-block"
+          >
+            Download File
+          </a>
+        </div>
+      }
+    </div>
+  </div>
+}

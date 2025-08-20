@@ -1,0 +1,23 @@
+<div class="flex flex-col items-center justify-center min-h-[calc(100vh-200px)]">
+  <div class="w-full max-w-md p-8 space-y-6 bg-gray-800 rounded-lg shadow-lg">
+    <h2 class="text-2xl font-bold text-center text-white">Provision Media Server</h2>
+    <p class="text-center text-gray-400">Please enter the base URL of your media server API.</p>
+
+    <div>
+      <label for="apiUrl" class="text-sm font-medium text-gray-300">API URL</label>
+      <input
+        id="apiUrl"
+        type="text"
+        [(ngModel)]="apiURL"
+        class="w-full p-2 mt-1 text-white bg-gray-700 border border-gray-600 rounded-md focus:ring-purple-500 focus:border-purple-500"
+      />
+    </div>
+
+    <button
+      (click)="saveURL()"
+      class="w-full py-2 px-4 font-semibold text-white bg-purple-600 rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 focus:ring-offset-gray-800"
+    >
+      Save and Continue
+    </button>
+  </div>
+</div>
