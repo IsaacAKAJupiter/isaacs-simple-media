@@ -1,23 +1,23 @@
 <div class="p-4">
   <h2 class="text-2xl font-bold mb-4">Categories</h2>
-  <div class="mb-6 p-4 bg-gray-800 rounded-lg">
+  <div class="mb-6 p-4 bg-secondary rounded-lg">
     <h3 class="text-lg font-semibold mb-2">Create New Category</h3>
     <div class="flex flex-col sm:flex-row gap-2">
       <input
         type="text"
         [(ngModel)]="newCategoryName"
         placeholder="Category name"
-        class="p-2 rounded bg-gray-700 text-white border border-gray-600 flex-grow"
+        class="p-2 rounded bg-white text-black flex-grow ring-primary border-primary"
       />
       <input
         type="text"
         [(ngModel)]="newCategoryDescription"
         placeholder="Description (optional)"
-        class="p-2 rounded bg-gray-700 text-white border border-gray-600 flex-grow"
+        class="p-2 rounded bg-white text-black flex-grow ring-primary border-primary"
       />
       <button
         (click)="createCategory()"
-        class="cursor-pointer bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded"
+        class="cursor-pointer bg-primary hover:bg-primary-200 text-white font-bold py-2 px-4 rounded"
       >
         Create
       </button>

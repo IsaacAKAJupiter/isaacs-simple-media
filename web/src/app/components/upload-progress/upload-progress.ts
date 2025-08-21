@@ -87,7 +87,7 @@ export class UploadProgress implements OnInit {
       case 'queued':
         return 'bg-gray-500';
       default:
-        return 'bg-purple-600';
+        return 'bg-blue-600';
     }
   }
 

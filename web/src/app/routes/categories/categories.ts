@@ -18,26 +18,29 @@ export class Categories {
   newCategoryName = signal<string>('');
   newCategoryDescription = signal<string>('');
 
-  private readonly categoriesApi = new CategoriesApi(undefined, this.configService.getBaseURL());
+  private categoriesApi?: CategoriesApi;
 
   constructor() {
     afterNextRender(() => {
       if (!this.configService.isProvisioned()) {
         this.router.navigate(['/']);
       }
+
+      this.categoriesApi = new CategoriesApi(undefined, this.configService.getBaseURL());
+      this.loadCategories();
     });
   }
 
-  ngOnInit() {
-    this.loadCategories();
-  }
-
   async loadCategories() {
+    if (!this.categoriesApi) return;
+
     const response = await this.categoriesApi.findAll();
     this.categories.set(response.data);
   }
 
   async createCategory() {
+    if (!this.categoriesApi) return;
+
     const newCategoryName = this.newCategoryName();
     const newCategoryDescription = this.newCategoryDescription();
     if (!newCategoryName.trim()) return;
@@ -57,6 +60,8 @@ export class Categories {
   }
 
   async deleteCategory(id: string) {
+    if (!this.categoriesApi) return;
+
     if (!confirm('Are you sure you want to delete this category?')) return;
 
     const response = await this.categoriesApi.remove(id);

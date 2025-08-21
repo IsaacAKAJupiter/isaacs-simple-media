@@ -5,7 +5,6 @@ import {
   ElementRef,
   inject,
   OnDestroy,
-  OnInit,
   signal,
   viewChild,
 } from '@angular/core';
@@ -32,7 +31,7 @@ import { UploadService } from '../../services/upload';
   templateUrl: './category.html',
   styleUrl: './category.css',
 })
-export class Category implements OnInit, OnDestroy {
+export class Category implements OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly configService = inject(ConfigService);
@@ -52,8 +51,8 @@ export class Category implements OnInit, OnDestroy {
   private masonry?: Masonry;
   private imagesLoadedCB = this._imagesLoadedCB.bind(this);
 
-  private readonly mediaItemApi = new MediaItemApi(undefined, this.configService.getBaseURL());
-  private readonly categoriesApi = new CategoriesApi(undefined, this.configService.getBaseURL());
+  private mediaItemApi?: MediaItemApi;
+  private categoriesApi?: CategoriesApi;
 
   private masonryDiv = viewChild<ElementRef<HTMLDivElement>>('masonryDiv');
 
@@ -63,6 +62,21 @@ export class Category implements OnInit, OnDestroy {
         this.router.navigate(['/']);
       }
 
+      this.mediaItemApi = new MediaItemApi(undefined, this.configService.getBaseURL());
+      this.categoriesApi = new CategoriesApi(undefined, this.configService.getBaseURL());
+
+      this.categoryID.set(this.route.snapshot.paramMap.get('id'));
+      this.loadMedia();
+      this.loadCategories();
+
+      if (this.categoryID()) {
+        this.loadCategoryDetails();
+      }
+
+      this.uploadSuccessSubscription = this.uploadService.uploadSuccess$.subscribe((mediaItem) => {
+        this.mediaItems.update((i) => [...(i ?? []), mediaItem]);
+      });
+
       this.masonryLib = (await import('masonry-layout')).default;
       this.imagesOnlyLib = (await import('imagesloaded')).default;
       this.initMasonry();
@@ -71,20 +85,6 @@ export class Category implements OnInit, OnDestroy {
     effect(() => {
       this.mediaItems();
       this.initMasonry();
-    });
-  }
-
-  ngOnInit() {
-    this.categoryID.set(this.route.snapshot.paramMap.get('id'));
-    this.loadMedia();
-    this.loadCategories();
-
-    if (this.categoryID()) {
-      this.loadCategoryDetails();
-    }
-
-    this.uploadSuccessSubscription = this.uploadService.uploadSuccess$.subscribe((mediaItem) => {
-      this.mediaItems.update((i) => [...(i ?? []), mediaItem]);
     });
   }
 
@@ -110,6 +110,8 @@ export class Category implements OnInit, OnDestroy {
   }
 
   async loadMedia() {
+    if (!this.categoriesApi || !this.mediaItemApi) return;
+
     const categoryID = this.categoryID();
     if (categoryID) {
       const response = await this.categoriesApi.findOne(categoryID);
@@ -122,13 +124,15 @@ export class Category implements OnInit, OnDestroy {
 
   async loadCategoryDetails() {
     const categoryID = this.categoryID();
-    if (!categoryID) return;
+    if (!categoryID || !this.categoriesApi) return;
 
     const response = await this.categoriesApi.findOne(categoryID);
     this.category.set(response.data);
   }
 
   async loadCategories() {
+    if (!this.categoriesApi) return;
+
     const categoryID = this.categoryID();
     const response = await this.categoriesApi.findAll();
     this.otherCategories.set(
@@ -137,6 +141,8 @@ export class Category implements OnInit, OnDestroy {
   }
 
   async deleteMedia() {
+    if (!this.mediaItemApi) return;
+
     const items = this.checkedMediaItems();
     if (items.size < 1) return;
 
@@ -145,7 +151,7 @@ export class Category implements OnInit, OnDestroy {
     const deleteResults = await Promise.allSettled(
       Array.from(items).map(async (i) => ({
         id: i,
-        result: await this.mediaItemApi.deleteItem(i),
+        result: await this.mediaItemApi!.deleteItem(i),
       })),
     );
     const successIDs = new Set(
@@ -170,6 +176,8 @@ export class Category implements OnInit, OnDestroy {
   }
 
   async setAsThumbnail() {
+    if (!this.categoriesApi) return;
+
     const items = Array.from(this.checkedMediaItems());
     const category = this.category();
     if (items.length !== 1 || !category) return;
@@ -188,6 +196,8 @@ export class Category implements OnInit, OnDestroy {
   }
 
   async moveCategory() {
+    if (!this.mediaItemApi) return;
+
     const items = this.checkedMediaItems();
     const selectedCategory = this.otherCategorySelected();
     if (items.size < 1 || !selectedCategory) return;
@@ -196,14 +206,14 @@ export class Category implements OnInit, OnDestroy {
     const results = await Promise.allSettled(
       Array.from(items).map(async (i) => {
         if (categoryID) {
-          const removeResponse = await this.mediaItemApi.removeMediaItemFromCategory(i, {
+          const removeResponse = await this.mediaItemApi!.removeMediaItemFromCategory(i, {
             categoryID,
           });
           if (removeResponse.status !== 200) throw new Error();
         }
 
         if (selectedCategory !== 'remove') {
-          const addResponse = await this.mediaItemApi.addMediaItemToCategory(i, {
+          const addResponse = await this.mediaItemApi!.addMediaItemToCategory(i, {
             categoryID: selectedCategory,
           });
           if (addResponse.status !== 200) throw new Error();

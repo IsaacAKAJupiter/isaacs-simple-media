@@ -14,14 +14,11 @@ import { MediaItemModule } from './media-item/media-item.module';
 import { StaticDocsModule } from './static-docs/static-docs.module';
 
 const envSchema = joi.object({
-    NODE_ENV: joi
-        .string()
-        .valid('development', 'production', 'test', 'provision')
-        .default('development'),
     PORT: joi.number().port().default(3333),
     REDIS_HOST: joi.string().default('localhost'),
     REDIS_PORT: joi.number().port().default(6379),
     REDIS_KEY_PREFIX: joi.string().default('bull_ism'),
+    DATABASE_PATH: joi.string().default('ism.db'),
     UPLOAD_DIRECTORY: joi.string().default('./upload'),
     IMPORT_DIRECTORY: joi.string().default('./import'),
 });
@@ -33,7 +30,11 @@ const envSchema = joi.object({
             isGlobal: true,
             expandVariables: true,
         }),
-        TypeOrmModule.forRoot(dataSourceOptions),
+        TypeOrmModule.forRootAsync({
+            inject: [ConfigService],
+            useFactory: async (config: ConfigService) =>
+                dataSourceOptions(config.get('DATABASE_PATH')),
+        }),
         ScheduleModule.forRoot(),
         BullModule.forRootAsync({
             inject: [ConfigService],
