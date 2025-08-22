@@ -7,8 +7,9 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
     const app = await NestFactory.create<NestExpressApplication>(AppModule);
-    const configService = app.get(ConfigService);
+    app.enableCors();
 
+    const configService = app.get(ConfigService);
     app.useStaticAssets(configService.getOrThrow('UPLOAD_DIRECTORY'), {
         prefix: '/static/',
     });
