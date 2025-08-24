@@ -32,7 +32,6 @@ class _ZoomableVideoPlayerState extends State<ZoomableVideoPlayer> {
   }
 
   void _onScaleUpdate() {
-    // The matrix's first value is the scale value.
     final double scale = _transformationController.value.getMaxScaleOnAxis();
     widget.onScaleChanged(scale > 1.0);
   }
@@ -50,7 +49,7 @@ class _ZoomableVideoPlayerState extends State<ZoomableVideoPlayer> {
           aspectRatio: _videoPlayerController.value.aspectRatio,
           autoPlay: widget.shouldPlay,
           looping: true,
-          showControlsOnInitialize: false, // Hides controls on load
+          showControlsOnInitialize: false,
         );
       });
     }

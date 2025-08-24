@@ -1,8 +1,7 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:isaacs_simple_media_mobile/api_config.dart';
-import 'package:isaacs_simple_media_mobile/routes/media_grid.dart';
 import 'package:isaacs_simple_media_mobile/routes/provision.dart';
+import 'package:isaacs_simple_media_mobile/widgets/category_card.dart';
 import 'package:openapi/openapi.dart';
 
 class CategoriesRoute extends StatefulWidget {
@@ -15,7 +14,7 @@ class CategoriesRoute extends StatefulWidget {
 class _CategoriesRouteState extends State<CategoriesRoute> {
   late Future<List<CategoryDto>> futureCategories;
 
-  final categoriesApi = CategoriesApi(ApiConfig.dio, standardSerializers);
+  final categoriesApi = CategoriesApi(ApiConfig.dio(), standardSerializers);
 
   @override
   void initState() {
@@ -47,7 +46,7 @@ class _CategoriesRouteState extends State<CategoriesRoute> {
         title: const Text('Categories'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.settings),
+            icon: const Icon(Icons.logout),
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) => const ProvisionRoute()),
@@ -66,75 +65,21 @@ class _CategoriesRouteState extends State<CategoriesRoute> {
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return const Center(child: Text('No categories found.'));
           } else {
-            return ListView(
-              children: [
-                ListTile(
-                  leading: const SizedBox(
-                    width: 56, // Standard leading width
-                    height: 56,
-                    child: Icon(Icons.folder_off_outlined, size: 40),
-                  ),
-                  title: const Text('Uncategorised'),
-                  subtitle: const Text('Media without a category'),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            const MediaGridRoute(title: 'Uncategorised'),
-                      ),
-                    );
-                  },
-                ),
-                ...snapshot.data!.map((category) {
-                  return ListTile(
-                    leading: SizedBox(
-                      width: 56,
-                      height: 56,
-                      child: _buildCategoryThumbnail(category.thumbnail),
-                    ),
-                    title: Text(category.name),
-                    subtitle: Text(category.description?.toString() ?? ''),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => MediaGridRoute(
-                            categoryID: category.id,
-                            title: category.name,
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                }).toList(),
-              ],
+            final allCategories = [...snapshot.data!];
+
+            return ListView.builder(
+              padding: const EdgeInsets.all(8.0),
+              itemCount: allCategories.length + 1,
+              itemBuilder: (context, index) {
+                if (index == 0) {
+                  return CategoryCard(category: null);
+                }
+
+                return CategoryCard(category: allCategories[index - 1]);
+              },
             );
           }
         },
-      ),
-    );
-  }
-
-  Widget _buildCategoryThumbnail(MediaItemDto? thumbnail) {
-    if (thumbnail == null) {
-      return const Icon(Icons.folder_outlined, size: 40);
-    }
-
-    final isVideo = thumbnail.mediaType.startsWith('video/');
-    final isGIF = thumbnail.mediaType.startsWith('image/gif');
-    final thumbnailUrl = isVideo || isGIF
-        ? '${ApiConfig.baseUrl}/static/thumbnails/${thumbnail.id}.png'
-        : '${ApiConfig.baseUrl}/static/${thumbnail.id}.${thumbnail.extension_}';
-
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(8.0),
-      child: CachedNetworkImage(
-        imageUrl: thumbnailUrl,
-        fit: BoxFit.cover,
-        placeholder: (context, url) =>
-            const Center(child: CircularProgressIndicator()),
-        errorWidget: (context, url, error) => const Icon(Icons.error),
       ),
     );
   }

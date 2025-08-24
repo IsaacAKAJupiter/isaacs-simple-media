@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
 import 'package:flutter/material.dart';
 import 'package:isaacs_simple_media_mobile/api_config.dart';
 import 'package:isaacs_simple_media_mobile/routes/categories.dart';
@@ -13,6 +16,8 @@ class ProvisionRoute extends StatefulWidget {
 
 class _ProvisionRouteState extends State<ProvisionRoute> {
   final _textController = TextEditingController();
+  bool _allowSelfSignedCerts = false;
+  bool _biometricUnlocking = false;
   bool _isChecking = false;
 
   @override
@@ -21,7 +26,7 @@ class _ProvisionRouteState extends State<ProvisionRoute> {
     _textController.text = ApiConfig.baseUrl;
   }
 
-  void _saveUrl() async {
+  void _save() async {
     if (_textController.text.isEmpty) {
       ScaffoldMessenger.of(
         context,
@@ -29,32 +34,31 @@ class _ProvisionRouteState extends State<ProvisionRoute> {
       return;
     }
 
-    setState(() {
-      _isChecking = true;
-    });
+    setState(() => _isChecking = true);
 
     bool success = false;
     try {
-      final response = await AppApi(
-        Dio(
-          BaseOptions(
-            baseUrl: _textController.text,
-            connectTimeout: Duration(seconds: 3),
-            sendTimeout: Duration(seconds: 10),
-            receiveTimeout: Duration(seconds: 10),
-          ),
+      final dio = Dio(
+        BaseOptions(
+          baseUrl: _textController.text,
+          connectTimeout: Duration(seconds: 3),
+          sendTimeout: Duration(seconds: 10),
+          receiveTimeout: Duration(seconds: 10),
         ),
-        standardSerializers,
-      ).health();
+      );
+
+      (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
+        final client = HttpClient();
+        client.badCertificateCallback = (cert, host, port) => true;
+        return client;
+      };
+
+      final response = await AppApi(dio, standardSerializers).health();
       success = response.statusCode == 200;
-    } catch (_) {
-      //
-    }
+    } catch (_) {}
 
     if (!mounted) return;
-    setState(() {
-      _isChecking = false;
-    });
+    setState(() => _isChecking = false);
 
     if (!success) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -63,7 +67,11 @@ class _ProvisionRouteState extends State<ProvisionRoute> {
       return;
     }
 
-    await ApiConfig.saveApiUrl(_textController.text);
+    await ApiConfig.save(
+      url: _textController.text,
+      allowSelfSignedCerts: _allowSelfSignedCerts,
+      biometricUnlocking: _biometricUnlocking,
+    );
     if (!mounted) return;
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(builder: (context) => const CategoriesRoute()),
@@ -89,11 +97,34 @@ class _ProvisionRouteState extends State<ProvisionRoute> {
               keyboardType: TextInputType.url,
             ),
             const SizedBox(height: 20),
+            CheckboxListTile(
+              value: _allowSelfSignedCerts,
+              onChanged: (final v) {
+                _allowSelfSignedCerts = v ?? false;
+                setState(() {});
+              },
+              title: const Text('Allow Self-Signed Certificates'),
+              subtitle: const Text(
+                'Note, works for everything except for video playing. You must install the CA cert on your android device for that to work.',
+              ),
+              controlAffinity: ListTileControlAffinity.trailing,
+            ),
+            const SizedBox(height: 20),
+            CheckboxListTile(
+              value: _biometricUnlocking,
+              onChanged: (final v) {
+                _biometricUnlocking = v ?? false;
+                setState(() {});
+              },
+              title: const Text('Enable Biometric Unlocking'),
+              controlAffinity: ListTileControlAffinity.trailing,
+            ),
+            const SizedBox(height: 20),
             if (_isChecking)
               const CircularProgressIndicator()
             else
               ElevatedButton(
-                onPressed: _saveUrl,
+                onPressed: _save,
                 child: const Text('Save and Continue'),
               ),
           ],

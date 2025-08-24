@@ -25,9 +25,7 @@ class _MediaViewerRouteState extends State<MediaViewerRoute> {
   bool _isZoomed = false;
 
   void _onScaleChanged(bool isZoomed) {
-    setState(() {
-      _isZoomed = isZoomed;
-    });
+    setState(() => _isZoomed = isZoomed);
   }
 
   @override
@@ -53,7 +51,6 @@ class _MediaViewerRouteState extends State<MediaViewerRoute> {
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: PageView.builder(
-        // Conditionally disable scrolling when zoomed in
         physics: _isZoomed
             ? const NeverScrollableScrollPhysics()
             : const AlwaysScrollableScrollPhysics(),
@@ -62,7 +59,7 @@ class _MediaViewerRouteState extends State<MediaViewerRoute> {
         onPageChanged: (index) {
           setState(() {
             _currentIndex = index;
-            _isZoomed = false; // Reset zoom state on page change
+            _isZoomed = false;
           });
         },
         itemBuilder: (context, index) {
@@ -86,7 +83,6 @@ class _MediaViewerRouteState extends State<MediaViewerRoute> {
               minScale: PhotoViewComputedScale.contained,
               maxScale: PhotoViewComputedScale.covered * 2,
               heroAttributes: PhotoViewHeroAttributes(tag: item.id),
-              // Callback to update zoom state for images
               scaleStateChangedCallback: (state) {
                 _onScaleChanged(state != PhotoViewScaleState.initial);
               },

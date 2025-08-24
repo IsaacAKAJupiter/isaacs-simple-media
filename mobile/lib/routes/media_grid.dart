@@ -17,8 +17,8 @@ class MediaGridRoute extends StatefulWidget {
 class _MediaGridRouteState extends State<MediaGridRoute> {
   late Future<List<MediaItemDto>> futureMediaItems;
 
-  final categoriesApi = CategoriesApi(ApiConfig.dio, standardSerializers);
-  final mediaItemsApi = MediaItemApi(ApiConfig.dio, standardSerializers);
+  final categoriesApi = CategoriesApi(ApiConfig.dio(), standardSerializers);
+  final mediaItemsApi = MediaItemApi(ApiConfig.dio(), standardSerializers);
 
   @override
   void initState() {
@@ -58,14 +58,29 @@ class _MediaGridRouteState extends State<MediaGridRoute> {
                   key: ValueKey(item.id),
                   item: item,
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => MediaViewerRoute(
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //     builder: (context) => MediaViewerRoute(
+                    //       mediaItems: snapshot.data!,
+                    //       initialIndex: index,
+                    //     ),
+                    //   ),
+                    // );
+                    showGeneralDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      fullscreenDialog: true,
+                      pageBuilder: (_, _, _) {
+                        return MediaViewerRoute(
                           mediaItems: snapshot.data!,
                           initialIndex: index,
-                        ),
-                      ),
+                        );
+                      },
+                      transitionBuilder: (ctx, a1, a2, child) {
+                        return FadeTransition(opacity: a1, child: child);
+                      },
+                      transitionDuration: const Duration(milliseconds: 200),
                     );
                   },
                 );
