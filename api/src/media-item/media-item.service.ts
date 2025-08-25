@@ -137,7 +137,7 @@ export class MediaItemService {
                 if (options.deleteOnFail) await unlink(options.file.path);
                 return {
                     result: 'error',
-                    message: 'Unable to find size of file.',
+                    message: `Unable to find size of file with error: ${e}.`,
                 };
             }
 
@@ -154,7 +154,7 @@ export class MediaItemService {
                 if (options.deleteOnFail) await unlink(options.file.path);
                 return {
                     result: 'error',
-                    message: 'Unable to find size of file.',
+                    message: `Unable to rename file with error: ${e}.`,
                 };
             }
 

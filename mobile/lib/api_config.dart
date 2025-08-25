@@ -16,10 +16,10 @@ class ApiConfig {
   static bool get allowSelfSignedCerts => _allowSelfSignedCerts;
   static bool get biometricUnlocking => _biometricUnlocking;
 
-  static Dio dio() {
+  static Dio dio({String? givenBaseUrl, bool? givenAllowSelfSigned}) {
     final dio = Dio(
       BaseOptions(
-        baseUrl: baseUrl,
+        baseUrl: givenBaseUrl ?? _baseUrl,
         connectTimeout: Duration(seconds: 3),
         sendTimeout: Duration(seconds: 10),
         receiveTimeout: Duration(seconds: 10),
@@ -29,8 +29,9 @@ class ApiConfig {
     (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
       final client = HttpClient();
       client.badCertificateCallback = (cert, host, port) {
-        if (!_allowSelfSignedCerts) return false;
-        return _baseUrl.contains(host);
+        final allow = givenAllowSelfSigned ?? allowSelfSignedCerts;
+        if (!allow) return false;
+        return (givenBaseUrl ?? _baseUrl).contains(host);
       };
       return client;
     };
@@ -55,6 +56,8 @@ class ApiConfig {
     await prefs.setBool(_allowSelfSignedCertsKey, allowSelfSignedCerts);
     await prefs.setBool(_biometricUnlockingKey, biometricUnlocking);
     _baseUrl = url;
+    _allowSelfSignedCerts = allowSelfSignedCerts;
+    _biometricUnlocking = biometricUnlocking;
   }
 
   static bool isProvisioned() {

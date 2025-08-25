@@ -1,7 +1,3 @@
-import 'dart:io';
-
-import 'package:dio/dio.dart';
-import 'package:dio/io.dart';
 import 'package:flutter/material.dart';
 import 'package:isaacs_simple_media_mobile/api_config.dart';
 import 'package:isaacs_simple_media_mobile/routes/categories.dart';
@@ -38,22 +34,13 @@ class _ProvisionRouteState extends State<ProvisionRoute> {
 
     bool success = false;
     try {
-      final dio = Dio(
-        BaseOptions(
-          baseUrl: _textController.text,
-          connectTimeout: Duration(seconds: 3),
-          sendTimeout: Duration(seconds: 10),
-          receiveTimeout: Duration(seconds: 10),
+      final response = await AppApi(
+        ApiConfig.dio(
+          givenBaseUrl: _textController.text,
+          givenAllowSelfSigned: _allowSelfSignedCerts,
         ),
-      );
-
-      (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
-        final client = HttpClient();
-        client.badCertificateCallback = (cert, host, port) => true;
-        return client;
-      };
-
-      final response = await AppApi(dio, standardSerializers).health();
+        standardSerializers,
+      ).health();
       success = response.statusCode == 200;
     } catch (_) {}
 
