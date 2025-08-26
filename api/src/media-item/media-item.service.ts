@@ -6,11 +6,13 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Queue } from 'bullmq';
-import { fileTypeFromBuffer } from 'file-type';
+import { fileTypeFromFile } from 'file-type';
+import { createReadStream, move } from 'fs-extra';
 import mime from 'mime';
 import { createHash, randomUUID } from 'node:crypto';
-import { readFile, rename, stat, unlink } from 'node:fs/promises';
+import { stat, unlink } from 'node:fs/promises';
 import { basename, extname } from 'node:path';
+import { pipeline } from 'node:stream/promises';
 import { Category } from 'src/category/entities/category.entity';
 import { JobsService } from 'src/jobs/jobs.service';
 import { IsNull, Not, Repository } from 'typeorm';
@@ -114,16 +116,19 @@ export class MediaItemService {
         | { result: 'error'; message: string }
     > {
         try {
-            const fileBuffer = await readFile(options.file.path);
-            const fileType = await fileTypeFromBuffer(fileBuffer);
+            const fileType = await fileTypeFromFile(options.file.path);
             if (!fileType || !/^(image|video)/.test(fileType.mime)) {
                 if (options.deleteOnFail) await unlink(options.file.path);
                 return { result: 'unsupported' };
             }
 
-            const hash = createHash('sha256').update(fileBuffer).digest('hex');
+            const sourceStream = createReadStream(options.file.path);
+            const hashStream = createHash('sha256');
+            await pipeline(sourceStream, hashStream);
+            const contentHash = hashStream.digest('hex');
+
             const existingItem = await this.mediaItemRepository.findOneBy({
-                contentHash: hash,
+                contentHash,
             });
             if (existingItem) {
                 if (options.deleteOnFail) await unlink(options.file.path);
@@ -142,6 +147,7 @@ export class MediaItemService {
             }
 
             const extension = (
+                fileType.ext ??
                 mime.getExtension(options.file.mimetype) ??
                 extname(options.file.path)
             ).replace(/\./g, '');
@@ -149,7 +155,7 @@ export class MediaItemService {
             const uuid = randomUUID();
             const newPath = `${this.configService.get('UPLOAD_DIRECTORY')}/${uuid}.${extension}`;
             try {
-                await rename(options.file.path, newPath);
+                await move(options.file.path, newPath);
             } catch (e) {
                 if (options.deleteOnFail) await unlink(options.file.path);
                 return {
@@ -161,7 +167,7 @@ export class MediaItemService {
             const newMediaItem = this.mediaItemRepository.create({
                 id: uuid,
                 fileName: options.file.originalname,
-                contentHash: hash,
+                contentHash,
                 mediaType: options.file.mimetype,
                 extension,
                 size,
