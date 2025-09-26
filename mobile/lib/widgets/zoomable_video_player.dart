@@ -1,5 +1,6 @@
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
+import 'package:isaacs_simple_media_mobile/widgets/custom_chewie_controls.dart';
 import 'package:video_player/video_player.dart';
 
 class ZoomableVideoPlayer extends StatefulWidget {
@@ -50,6 +51,8 @@ class _ZoomableVideoPlayerState extends State<ZoomableVideoPlayer> {
           autoPlay: widget.shouldPlay,
           looping: true,
           showControlsOnInitialize: false,
+          allowedScreenSleep: false,
+          customControls: const CustomChewieControls(),
         );
       });
     }
@@ -58,10 +61,13 @@ class _ZoomableVideoPlayerState extends State<ZoomableVideoPlayer> {
   @override
   void didUpdateWidget(covariant ZoomableVideoPlayer oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.shouldPlay && _chewieController?.isPlaying == false) {
-      _chewieController?.play();
-    } else if (!widget.shouldPlay && _chewieController?.isPlaying == true) {
-      _chewieController?.pause();
+
+    if (widget.shouldPlay != oldWidget.shouldPlay) {
+      if (widget.shouldPlay && _chewieController?.isPlaying == false) {
+        _chewieController?.play();
+      } else if (!widget.shouldPlay && _chewieController?.isPlaying == true) {
+        _chewieController?.pause();
+      }
     }
   }
 
