@@ -11,6 +11,7 @@ Name | Type | Description | Notes
 **thumbnail** | [**MediaItemDto**](MediaItemDto.md) | Thumbnail media item | [optional] [default to undefined]
 **createdAt** | **string** | Creation date of the category | [optional] [default to undefined]
 **updatedAt** | **string** | Last update date of the category | [optional] [default to undefined]
+**tags** | [**Array&lt;CategoryTagDto&gt;**](CategoryTagDto.md) | Tags associated with the category | [optional] [default to undefined]
 **mediaItems** | [**Array&lt;MediaItemDto&gt;**](MediaItemDto.md) | List of media items associated with the category | [optional] [default to undefined]
 
 ## Example
@@ -25,6 +26,7 @@ const instance: PatchCategoryDto = {
     thumbnail,
     createdAt,
     updatedAt,
+    tags,
     mediaItems,
 };
 ```

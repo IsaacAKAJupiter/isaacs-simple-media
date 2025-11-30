@@ -12,12 +12,17 @@ export 'package:openapi/src/model/date.dart';
 
 export 'package:openapi/src/api/app_api.dart';
 export 'package:openapi/src/api/categories_api.dart';
+export 'package:openapi/src/api/category_tags_api.dart';
 export 'package:openapi/src/api/jobs_api.dart';
 export 'package:openapi/src/api/media_item_api.dart';
 export 'package:openapi/src/api/static_assets_api.dart';
 
+export 'package:openapi/src/model/add_category_tag_dto.dart';
 export 'package:openapi/src/model/add_or_remove_single_category_dto.dart';
 export 'package:openapi/src/model/category_dto.dart';
+export 'package:openapi/src/model/category_tag_dto.dart';
 export 'package:openapi/src/model/create_category_dto.dart';
+export 'package:openapi/src/model/create_category_tag_dto.dart';
 export 'package:openapi/src/model/media_item_dto.dart';
+export 'package:openapi/src/model/patch_category_dto.dart';
 

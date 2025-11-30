@@ -27,4 +27,12 @@ export class CreateCategoryDto {
     @IsOptional()
     @IsString()
     readonly thumbnailMediaID: string;
+
+    @ApiPropertyOptional({
+        type: [Number],
+        description: 'Array of tag IDs for the category',
+        example: [1, 2, 3],
+    })
+    @IsOptional()
+    tags?: number[];
 }

@@ -58,15 +58,6 @@ class _MediaGridRouteState extends State<MediaGridRoute> {
                   key: ValueKey(item.id),
                   item: item,
                   onTap: () {
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //     builder: (context) => MediaViewerRoute(
-                    //       mediaItems: snapshot.data!,
-                    //       initialIndex: index,
-                    //     ),
-                    //   ),
-                    // );
                     showGeneralDialog(
                       context: context,
                       barrierDismissible: false,

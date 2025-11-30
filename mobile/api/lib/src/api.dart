@@ -11,6 +11,7 @@ import 'package:openapi/src/auth/bearer_auth.dart';
 import 'package:openapi/src/auth/oauth.dart';
 import 'package:openapi/src/api/app_api.dart';
 import 'package:openapi/src/api/categories_api.dart';
+import 'package:openapi/src/api/category_tags_api.dart';
 import 'package:openapi/src/api/jobs_api.dart';
 import 'package:openapi/src/api/media_item_api.dart';
 import 'package:openapi/src/api/static_assets_api.dart';
@@ -79,6 +80,12 @@ class Openapi {
   /// by doing that all interceptors will not be executed
   CategoriesApi getCategoriesApi() {
     return CategoriesApi(dio, serializers);
+  }
+
+  /// Get CategoryTagsApi instance, base route and serializer can be overridden by a given but be careful,
+  /// by doing that all interceptors will not be executed
+  CategoryTagsApi getCategoryTagsApi() {
+    return CategoryTagsApi(dio, serializers);
   }
 
   /// Get JobsApi instance, base route and serializer can be overridden by a given but be careful,

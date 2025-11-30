@@ -4,11 +4,72 @@ All URIs are relative to *http://localhost*
 
 |Method | HTTP request | Description|
 |------------- | ------------- | -------------|
+|[**addTag**](#addtag) | **POST** /category/{id}/tag | Add a tag to a category|
 |[**create**](#create) | **POST** /category | Create a new category|
 |[**findAll**](#findall) | **GET** /category | Retrieve all categories|
 |[**findOne**](#findone) | **GET** /category/{id} | Retrieve a category by ID|
 |[**remove**](#remove) | **DELETE** /category/{id} | Delete a category by ID|
+|[**removeTag**](#removetag) | **DELETE** /category/{id}/tag/{tagID} | Remove a tag from a category|
 |[**update**](#update) | **PATCH** /category/{id} | Update a category by ID|
+
+# **addTag**
+> CategoryDto addTag(addCategoryTagDto)
+
+
+### Example
+
+```typescript
+import {
+    CategoriesApi,
+    Configuration,
+    AddCategoryTagDto
+} from './api';
+
+const configuration = new Configuration();
+const apiInstance = new CategoriesApi(configuration);
+
+let id: string; //The ID of the category to add a tag to (default to undefined)
+let addCategoryTagDto: AddCategoryTagDto; //Tag ID to add.
+
+const { status, data } = await apiInstance.addTag(
+    id,
+    addCategoryTagDto
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **addCategoryTagDto** | **AddCategoryTagDto**| Tag ID to add. | |
+| **id** | [**string**] | The ID of the category to add a tag to | defaults to undefined|
+
+
+### Return type
+
+**CategoryDto**
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** | The tag has been successfully added. |  -  |
+|**404** | Category not found. |  -  |
+|**500** | Internal server error. |  -  |
+|**502** | Bad gateway. |  -  |
+|**503** | Service unavailable. |  -  |
+|**504** | Gateway timeout. |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **create**
 > CategoryDto create(createCategoryDto)
@@ -215,6 +276,64 @@ No authorization required
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 |**200** | The category has been successfully deleted. |  -  |
+|**404** | Category not found. |  -  |
+|**500** | Internal server error. |  -  |
+|**502** | Bad gateway. |  -  |
+|**503** | Service unavailable. |  -  |
+|**504** | Gateway timeout. |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **removeTag**
+> CategoryDto removeTag()
+
+
+### Example
+
+```typescript
+import {
+    CategoriesApi,
+    Configuration
+} from './api';
+
+const configuration = new Configuration();
+const apiInstance = new CategoriesApi(configuration);
+
+let id: string; //The ID of the category to remove a tag from (default to undefined)
+let tagID: number; //The ID of the tag to remove (default to undefined)
+
+const { status, data } = await apiInstance.removeTag(
+    id,
+    tagID
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **id** | [**string**] | The ID of the category to remove a tag from | defaults to undefined|
+| **tagID** | [**number**] | The ID of the tag to remove | defaults to undefined|
+
+
+### Return type
+
+**CategoryDto**
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** | The tag has been successfully removed. |  -  |
 |**404** | Category not found. |  -  |
 |**500** | Internal server error. |  -  |
 |**502** | Bad gateway. |  -  |

@@ -9,12 +9,57 @@ All URIs are relative to *http://localhost*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
+[**addTag**](CategoriesApi.md#addtag) | **POST** /category/{id}/tag | Add a tag to a category
 [**create**](CategoriesApi.md#create) | **POST** /category | Create a new category
 [**findAll**](CategoriesApi.md#findall) | **GET** /category | Retrieve all categories
 [**findOne**](CategoriesApi.md#findone) | **GET** /category/{id} | Retrieve a category by ID
 [**remove**](CategoriesApi.md#remove) | **DELETE** /category/{id} | Delete a category by ID
+[**removeTag**](CategoriesApi.md#removetag) | **DELETE** /category/{id}/tag/{tagID} | Remove a tag from a category
 [**update**](CategoriesApi.md#update) | **PATCH** /category/{id} | Update a category by ID
 
+
+# **addTag**
+> CategoryDto addTag(id, addCategoryTagDto)
+
+Add a tag to a category
+
+### Example
+```dart
+import 'package:openapi/api.dart';
+
+final api = Openapi().getCategoriesApi();
+final String id = id_example; // String | The ID of the category to add a tag to
+final AddCategoryTagDto addCategoryTagDto = ; // AddCategoryTagDto | Tag ID to add.
+
+try {
+    final response = api.addTag(id, addCategoryTagDto);
+    print(response);
+} catch on DioException (e) {
+    print('Exception when calling CategoriesApi->addTag: $e\n');
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **id** | **String**| The ID of the category to add a tag to | 
+ **addCategoryTagDto** | [**AddCategoryTagDto**](AddCategoryTagDto.md)| Tag ID to add. | 
+
+### Return type
+
+[**CategoryDto**](CategoryDto.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **create**
 > CategoryDto create(createCategoryDto)
@@ -175,8 +220,51 @@ No authorization required
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+# **removeTag**
+> CategoryDto removeTag(id, tagID)
+
+Remove a tag from a category
+
+### Example
+```dart
+import 'package:openapi/api.dart';
+
+final api = Openapi().getCategoriesApi();
+final String id = id_example; // String | The ID of the category to remove a tag from
+final num tagID = 8.14; // num | The ID of the tag to remove
+
+try {
+    final response = api.removeTag(id, tagID);
+    print(response);
+} catch on DioException (e) {
+    print('Exception when calling CategoriesApi->removeTag: $e\n');
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **id** | **String**| The ID of the category to remove a tag from | 
+ **tagID** | **num**| The ID of the tag to remove | 
+
+### Return type
+
+[**CategoryDto**](CategoryDto.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 # **update**
-> CategoryDto update(id, body)
+> CategoryDto update(id, patchCategoryDto)
 
 Update a category by ID
 
@@ -186,10 +274,10 @@ import 'package:openapi/api.dart';
 
 final api = Openapi().getCategoriesApi();
 final String id = id_example; // String | The ID of the category to update
-final JsonObject body = Object; // JsonObject | 
+final PatchCategoryDto patchCategoryDto = ; // PatchCategoryDto | Partial category body.
 
 try {
-    final response = api.update(id, body);
+    final response = api.update(id, patchCategoryDto);
     print(response);
 } catch on DioException (e) {
     print('Exception when calling CategoriesApi->update: $e\n');
@@ -201,7 +289,7 @@ try {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **id** | **String**| The ID of the category to update | 
- **body** | **JsonObject**|  | 
+ **patchCategoryDto** | [**PatchCategoryDto**](PatchCategoryDto.md)| Partial category body. | 
 
 ### Return type
 

@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsOptional, IsString, IsUUID } from 'class-validator';
 import { MediaItemDto } from 'src/media-item/dto/media-item.dto';
+import { CategoryTagDto } from '../../category-tag/dto/category-tag.dto';
 
 export class CategoryDto {
     @ApiProperty({
@@ -32,6 +33,14 @@ export class CategoryDto {
 
     @ApiProperty({ description: 'Last update date of the category' })
     updatedAt: Date;
+
+    @ApiProperty({
+        description: 'Tags associated with the category',
+        type: [CategoryTagDto],
+        required: false,
+    })
+    @IsOptional()
+    tags?: CategoryTagDto[];
 
     @ApiProperty({
         description: 'List of media items associated with the category',

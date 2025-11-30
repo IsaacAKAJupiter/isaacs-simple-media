@@ -12,6 +12,7 @@ import { FileWatcherModule } from './file-watcher/file-watcher.module';
 import { JobsModule } from './jobs/jobs.module';
 import { MediaItemModule } from './media-item/media-item.module';
 import { StaticDocsModule } from './static-docs/static-docs.module';
+import { CategoryTagModule } from './category-tag/category-tag.module';
 
 const envSchema = joi.object({
     PORT: joi.number().port().default(3333),
@@ -51,6 +52,7 @@ const envSchema = joi.object({
         MediaItemModule,
         FileWatcherModule,
         JobsModule,
+        CategoryTagModule,
     ],
     controllers: [AppController],
     providers: [AppService],

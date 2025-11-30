@@ -26,6 +26,19 @@ import { BASE_PATH, COLLECTION_FORMATS, BaseAPI, RequiredError, operationServerM
 /**
  * 
  * @export
+ * @interface AddCategoryTagDto
+ */
+export interface AddCategoryTagDto {
+    /**
+     * The unique identifier for the category tag.
+     * @type {number}
+     * @memberof AddCategoryTagDto
+     */
+    'tagID': number;
+}
+/**
+ * 
+ * @export
  * @interface AddOrRemoveSingleCategoryDto
  */
 export interface AddOrRemoveSingleCategoryDto {
@@ -79,11 +92,42 @@ export interface CategoryDto {
      */
     'updatedAt': string;
     /**
+     * Tags associated with the category
+     * @type {Array<CategoryTagDto>}
+     * @memberof CategoryDto
+     */
+    'tags'?: Array<CategoryTagDto>;
+    /**
      * List of media items associated with the category
      * @type {Array<MediaItemDto>}
      * @memberof CategoryDto
      */
     'mediaItems': Array<MediaItemDto> | null;
+}
+/**
+ * 
+ * @export
+ * @interface CategoryTagDto
+ */
+export interface CategoryTagDto {
+    /**
+     * ID of the tag
+     * @type {number}
+     * @memberof CategoryTagDto
+     */
+    'id': number;
+    /**
+     * Name of the tag
+     * @type {string}
+     * @memberof CategoryTagDto
+     */
+    'name': string;
+    /**
+     * Colour of the tag as hex code
+     * @type {string}
+     * @memberof CategoryTagDto
+     */
+    'colour': string;
 }
 /**
  * 
@@ -109,6 +153,31 @@ export interface CreateCategoryDto {
      * @memberof CreateCategoryDto
      */
     'thumbnailMediaID'?: string;
+    /**
+     * Array of tag IDs for the category
+     * @type {Array<number>}
+     * @memberof CreateCategoryDto
+     */
+    'tags'?: Array<number>;
+}
+/**
+ * 
+ * @export
+ * @interface CreateCategoryTagDto
+ */
+export interface CreateCategoryTagDto {
+    /**
+     * Name of the tag
+     * @type {string}
+     * @memberof CreateCategoryTagDto
+     */
+    'name': string;
+    /**
+     * Colour of the tag as hex code
+     * @type {string}
+     * @memberof CreateCategoryTagDto
+     */
+    'colour': string;
 }
 /**
  * 
@@ -213,6 +282,12 @@ export interface PatchCategoryDto {
      * @memberof PatchCategoryDto
      */
     'updatedAt'?: string;
+    /**
+     * Tags associated with the category
+     * @type {Array<CategoryTagDto>}
+     * @memberof PatchCategoryDto
+     */
+    'tags'?: Array<CategoryTagDto>;
     /**
      * List of media items associated with the category
      * @type {Array<MediaItemDto>}
@@ -324,6 +399,46 @@ export class AppApi extends BaseAPI {
  */
 export const CategoriesApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
+        /**
+         * 
+         * @summary Add a tag to a category
+         * @param {string} id The ID of the category to add a tag to
+         * @param {AddCategoryTagDto} addCategoryTagDto Tag ID to add.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        addTag: async (id: string, addCategoryTagDto: AddCategoryTagDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('addTag', 'id', id)
+            // verify required parameter 'addCategoryTagDto' is not null or undefined
+            assertParamExists('addTag', 'addCategoryTagDto', addCategoryTagDto)
+            const localVarPath = `/category/{id}/tag`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(addCategoryTagDto, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
         /**
          * 
          * @summary Create a new category
@@ -460,6 +575,44 @@ export const CategoriesApiAxiosParamCreator = function (configuration?: Configur
         },
         /**
          * 
+         * @summary Remove a tag from a category
+         * @param {string} id The ID of the category to remove a tag from
+         * @param {number} tagID The ID of the tag to remove
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        removeTag: async (id: string, tagID: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('removeTag', 'id', id)
+            // verify required parameter 'tagID' is not null or undefined
+            assertParamExists('removeTag', 'tagID', tagID)
+            const localVarPath = `/category/{id}/tag/{tagID}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)))
+                .replace(`{${"tagID"}}`, encodeURIComponent(String(tagID)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @summary Update a category by ID
          * @param {string} id The ID of the category to update
          * @param {PatchCategoryDto} patchCategoryDto Partial category body.
@@ -508,6 +661,20 @@ export const CategoriesApiAxiosParamCreator = function (configuration?: Configur
 export const CategoriesApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = CategoriesApiAxiosParamCreator(configuration)
     return {
+        /**
+         * 
+         * @summary Add a tag to a category
+         * @param {string} id The ID of the category to add a tag to
+         * @param {AddCategoryTagDto} addCategoryTagDto Tag ID to add.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async addTag(id: string, addCategoryTagDto: AddCategoryTagDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CategoryDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.addTag(id, addCategoryTagDto, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['CategoriesApi.addTag']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
         /**
          * 
          * @summary Create a new category
@@ -561,6 +728,20 @@ export const CategoriesApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary Remove a tag from a category
+         * @param {string} id The ID of the category to remove a tag from
+         * @param {number} tagID The ID of the tag to remove
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async removeTag(id: string, tagID: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CategoryDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.removeTag(id, tagID, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['CategoriesApi.removeTag']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
          * @summary Update a category by ID
          * @param {string} id The ID of the category to update
          * @param {PatchCategoryDto} patchCategoryDto Partial category body.
@@ -583,6 +764,17 @@ export const CategoriesApiFp = function(configuration?: Configuration) {
 export const CategoriesApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     const localVarFp = CategoriesApiFp(configuration)
     return {
+        /**
+         * 
+         * @summary Add a tag to a category
+         * @param {string} id The ID of the category to add a tag to
+         * @param {AddCategoryTagDto} addCategoryTagDto Tag ID to add.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        addTag(id: string, addCategoryTagDto: AddCategoryTagDto, options?: RawAxiosRequestConfig): AxiosPromise<CategoryDto> {
+            return localVarFp.addTag(id, addCategoryTagDto, options).then((request) => request(axios, basePath));
+        },
         /**
          * 
          * @summary Create a new category
@@ -624,6 +816,17 @@ export const CategoriesApiFactory = function (configuration?: Configuration, bas
         },
         /**
          * 
+         * @summary Remove a tag from a category
+         * @param {string} id The ID of the category to remove a tag from
+         * @param {number} tagID The ID of the tag to remove
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        removeTag(id: string, tagID: number, options?: RawAxiosRequestConfig): AxiosPromise<CategoryDto> {
+            return localVarFp.removeTag(id, tagID, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @summary Update a category by ID
          * @param {string} id The ID of the category to update
          * @param {PatchCategoryDto} patchCategoryDto Partial category body.
@@ -643,6 +846,19 @@ export const CategoriesApiFactory = function (configuration?: Configuration, bas
  * @extends {BaseAPI}
  */
 export class CategoriesApi extends BaseAPI {
+    /**
+     * 
+     * @summary Add a tag to a category
+     * @param {string} id The ID of the category to add a tag to
+     * @param {AddCategoryTagDto} addCategoryTagDto Tag ID to add.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof CategoriesApi
+     */
+    public addTag(id: string, addCategoryTagDto: AddCategoryTagDto, options?: RawAxiosRequestConfig) {
+        return CategoriesApiFp(this.configuration).addTag(id, addCategoryTagDto, options).then((request) => request(this.axios, this.basePath));
+    }
+
     /**
      * 
      * @summary Create a new category
@@ -692,6 +908,19 @@ export class CategoriesApi extends BaseAPI {
 
     /**
      * 
+     * @summary Remove a tag from a category
+     * @param {string} id The ID of the category to remove a tag from
+     * @param {number} tagID The ID of the tag to remove
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof CategoriesApi
+     */
+    public removeTag(id: string, tagID: number, options?: RawAxiosRequestConfig) {
+        return CategoriesApiFp(this.configuration).removeTag(id, tagID, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
      * @summary Update a category by ID
      * @param {string} id The ID of the category to update
      * @param {PatchCategoryDto} patchCategoryDto Partial category body.
@@ -701,6 +930,247 @@ export class CategoriesApi extends BaseAPI {
      */
     public update(id: string, patchCategoryDto: PatchCategoryDto, options?: RawAxiosRequestConfig) {
         return CategoriesApiFp(this.configuration).update(id, patchCategoryDto, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+
+/**
+ * CategoryTagsApi - axios parameter creator
+ * @export
+ */
+export const CategoryTagsApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * 
+         * @summary Create a new category tag
+         * @param {CreateCategoryTagDto} createCategoryTagDto The category tag to create.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createCategoryTag: async (createCategoryTagDto: CreateCategoryTagDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'createCategoryTagDto' is not null or undefined
+            assertParamExists('createCategoryTag', 'createCategoryTagDto', createCategoryTagDto)
+            const localVarPath = `/category-tag`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(createCategoryTagDto, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Delete a category tag
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteCategoryTag: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('deleteCategoryTag', 'id', id)
+            const localVarPath = `/category-tag/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Get all category tags
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getCategoryTags: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/category-tag`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * CategoryTagsApi - functional programming interface
+ * @export
+ */
+export const CategoryTagsApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = CategoryTagsApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * 
+         * @summary Create a new category tag
+         * @param {CreateCategoryTagDto} createCategoryTagDto The category tag to create.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async createCategoryTag(createCategoryTagDto: CreateCategoryTagDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CategoryTagDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.createCategoryTag(createCategoryTagDto, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['CategoryTagsApi.createCategoryTag']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Delete a category tag
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async deleteCategoryTag(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteCategoryTag(id, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['CategoryTagsApi.deleteCategoryTag']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Get all category tags
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getCategoryTags(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<CategoryTagDto>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getCategoryTags(options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['CategoryTagsApi.getCategoryTags']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * CategoryTagsApi - factory interface
+ * @export
+ */
+export const CategoryTagsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = CategoryTagsApiFp(configuration)
+    return {
+        /**
+         * 
+         * @summary Create a new category tag
+         * @param {CreateCategoryTagDto} createCategoryTagDto The category tag to create.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createCategoryTag(createCategoryTagDto: CreateCategoryTagDto, options?: RawAxiosRequestConfig): AxiosPromise<CategoryTagDto> {
+            return localVarFp.createCategoryTag(createCategoryTagDto, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Delete a category tag
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteCategoryTag(id: number, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.deleteCategoryTag(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Get all category tags
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getCategoryTags(options?: RawAxiosRequestConfig): AxiosPromise<Array<CategoryTagDto>> {
+            return localVarFp.getCategoryTags(options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * CategoryTagsApi - object-oriented interface
+ * @export
+ * @class CategoryTagsApi
+ * @extends {BaseAPI}
+ */
+export class CategoryTagsApi extends BaseAPI {
+    /**
+     * 
+     * @summary Create a new category tag
+     * @param {CreateCategoryTagDto} createCategoryTagDto The category tag to create.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof CategoryTagsApi
+     */
+    public createCategoryTag(createCategoryTagDto: CreateCategoryTagDto, options?: RawAxiosRequestConfig) {
+        return CategoryTagsApiFp(this.configuration).createCategoryTag(createCategoryTagDto, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Delete a category tag
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof CategoryTagsApi
+     */
+    public deleteCategoryTag(id: number, options?: RawAxiosRequestConfig) {
+        return CategoryTagsApiFp(this.configuration).deleteCategoryTag(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Get all category tags
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof CategoryTagsApi
+     */
+    public getCategoryTags(options?: RawAxiosRequestConfig) {
+        return CategoryTagsApiFp(this.configuration).getCategoryTags(options).then((request) => request(this.axios, this.basePath));
     }
 }
 

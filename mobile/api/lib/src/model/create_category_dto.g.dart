@@ -13,13 +13,15 @@ class _$CreateCategoryDto extends CreateCategoryDto {
   final String? description;
   @override
   final String? thumbnailMediaID;
+  @override
+  final BuiltList<num>? tags;
 
   factory _$CreateCategoryDto(
           [void Function(CreateCategoryDtoBuilder)? updates]) =>
       (CreateCategoryDtoBuilder()..update(updates))._build();
 
   _$CreateCategoryDto._(
-      {required this.name, this.description, this.thumbnailMediaID})
+      {required this.name, this.description, this.thumbnailMediaID, this.tags})
       : super._();
   @override
   CreateCategoryDto rebuild(void Function(CreateCategoryDtoBuilder) updates) =>
@@ -35,7 +37,8 @@ class _$CreateCategoryDto extends CreateCategoryDto {
     return other is CreateCategoryDto &&
         name == other.name &&
         description == other.description &&
-        thumbnailMediaID == other.thumbnailMediaID;
+        thumbnailMediaID == other.thumbnailMediaID &&
+        tags == other.tags;
   }
 
   @override
@@ -44,6 +47,7 @@ class _$CreateCategoryDto extends CreateCategoryDto {
     _$hash = $jc(_$hash, name.hashCode);
     _$hash = $jc(_$hash, description.hashCode);
     _$hash = $jc(_$hash, thumbnailMediaID.hashCode);
+    _$hash = $jc(_$hash, tags.hashCode);
     _$hash = $jf(_$hash);
     return _$hash;
   }
@@ -53,7 +57,8 @@ class _$CreateCategoryDto extends CreateCategoryDto {
     return (newBuiltValueToStringHelper(r'CreateCategoryDto')
           ..add('name', name)
           ..add('description', description)
-          ..add('thumbnailMediaID', thumbnailMediaID))
+          ..add('thumbnailMediaID', thumbnailMediaID)
+          ..add('tags', tags))
         .toString();
   }
 }
@@ -75,6 +80,10 @@ class CreateCategoryDtoBuilder
   set thumbnailMediaID(String? thumbnailMediaID) =>
       _$this._thumbnailMediaID = thumbnailMediaID;
 
+  ListBuilder<num>? _tags;
+  ListBuilder<num> get tags => _$this._tags ??= ListBuilder<num>();
+  set tags(ListBuilder<num>? tags) => _$this._tags = tags;
+
   CreateCategoryDtoBuilder() {
     CreateCategoryDto._defaults(this);
   }
@@ -85,6 +94,7 @@ class CreateCategoryDtoBuilder
       _name = $v.name;
       _description = $v.description;
       _thumbnailMediaID = $v.thumbnailMediaID;
+      _tags = $v.tags?.toBuilder();
       _$v = null;
     }
     return this;
@@ -104,13 +114,27 @@ class CreateCategoryDtoBuilder
   CreateCategoryDto build() => _build();
 
   _$CreateCategoryDto _build() {
-    final _$result = _$v ??
-        _$CreateCategoryDto._(
-          name: BuiltValueNullFieldError.checkNotNull(
-              name, r'CreateCategoryDto', 'name'),
-          description: description,
-          thumbnailMediaID: thumbnailMediaID,
-        );
+    _$CreateCategoryDto _$result;
+    try {
+      _$result = _$v ??
+          _$CreateCategoryDto._(
+            name: BuiltValueNullFieldError.checkNotNull(
+                name, r'CreateCategoryDto', 'name'),
+            description: description,
+            thumbnailMediaID: thumbnailMediaID,
+            tags: _tags?.build(),
+          );
+    } catch (_) {
+      late String _$failedField;
+      try {
+        _$failedField = 'tags';
+        _tags?.build();
+      } catch (e) {
+        throw BuiltValueNestedFieldError(
+            r'CreateCategoryDto', _$failedField, e.toString());
+      }
+      rethrow;
+    }
     replace(_$result);
     return _$result;
   }

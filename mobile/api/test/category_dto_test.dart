@@ -43,6 +43,12 @@ void main() {
       // TODO
     });
 
+    // Tags associated with the category
+    // BuiltList<CategoryTagDto> tags
+    test('to test the property `tags`', () async {
+      // TODO
+    });
+
     // List of media items associated with the category
     // BuiltList<MediaItemDto> mediaItems
     test('to test the property `mediaItems`', () async {

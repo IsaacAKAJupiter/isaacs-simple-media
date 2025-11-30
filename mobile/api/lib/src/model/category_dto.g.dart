@@ -20,6 +20,8 @@ class _$CategoryDto extends CategoryDto {
   @override
   final DateTime updatedAt;
   @override
+  final BuiltList<CategoryTagDto>? tags;
+  @override
   final BuiltList<MediaItemDto>? mediaItems;
 
   factory _$CategoryDto([void Function(CategoryDtoBuilder)? updates]) =>
@@ -32,6 +34,7 @@ class _$CategoryDto extends CategoryDto {
       this.thumbnail,
       required this.createdAt,
       required this.updatedAt,
+      this.tags,
       this.mediaItems})
       : super._();
   @override
@@ -51,6 +54,7 @@ class _$CategoryDto extends CategoryDto {
         thumbnail == other.thumbnail &&
         createdAt == other.createdAt &&
         updatedAt == other.updatedAt &&
+        tags == other.tags &&
         mediaItems == other.mediaItems;
   }
 
@@ -63,6 +67,7 @@ class _$CategoryDto extends CategoryDto {
     _$hash = $jc(_$hash, thumbnail.hashCode);
     _$hash = $jc(_$hash, createdAt.hashCode);
     _$hash = $jc(_$hash, updatedAt.hashCode);
+    _$hash = $jc(_$hash, tags.hashCode);
     _$hash = $jc(_$hash, mediaItems.hashCode);
     _$hash = $jf(_$hash);
     return _$hash;
@@ -77,6 +82,7 @@ class _$CategoryDto extends CategoryDto {
           ..add('thumbnail', thumbnail)
           ..add('createdAt', createdAt)
           ..add('updatedAt', updatedAt)
+          ..add('tags', tags)
           ..add('mediaItems', mediaItems))
         .toString();
   }
@@ -111,6 +117,11 @@ class CategoryDtoBuilder implements Builder<CategoryDto, CategoryDtoBuilder> {
   DateTime? get updatedAt => _$this._updatedAt;
   set updatedAt(DateTime? updatedAt) => _$this._updatedAt = updatedAt;
 
+  ListBuilder<CategoryTagDto>? _tags;
+  ListBuilder<CategoryTagDto> get tags =>
+      _$this._tags ??= ListBuilder<CategoryTagDto>();
+  set tags(ListBuilder<CategoryTagDto>? tags) => _$this._tags = tags;
+
   ListBuilder<MediaItemDto>? _mediaItems;
   ListBuilder<MediaItemDto> get mediaItems =>
       _$this._mediaItems ??= ListBuilder<MediaItemDto>();
@@ -130,6 +141,7 @@ class CategoryDtoBuilder implements Builder<CategoryDto, CategoryDtoBuilder> {
       _thumbnail = $v.thumbnail?.toBuilder();
       _createdAt = $v.createdAt;
       _updatedAt = $v.updatedAt;
+      _tags = $v.tags?.toBuilder();
       _mediaItems = $v.mediaItems?.toBuilder();
       _$v = null;
     }
@@ -163,6 +175,7 @@ class CategoryDtoBuilder implements Builder<CategoryDto, CategoryDtoBuilder> {
                 createdAt, r'CategoryDto', 'createdAt'),
             updatedAt: BuiltValueNullFieldError.checkNotNull(
                 updatedAt, r'CategoryDto', 'updatedAt'),
+            tags: _tags?.build(),
             mediaItems: _mediaItems?.build(),
           );
     } catch (_) {
@@ -171,6 +184,8 @@ class CategoryDtoBuilder implements Builder<CategoryDto, CategoryDtoBuilder> {
         _$failedField = 'thumbnail';
         _thumbnail?.build();
 
+        _$failedField = 'tags';
+        _tags?.build();
         _$failedField = 'mediaItems';
         _mediaItems?.build();
       } catch (e) {

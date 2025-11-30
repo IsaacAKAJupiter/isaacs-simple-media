@@ -9,6 +9,7 @@ import {
     InternalServerErrorException,
     NotFoundException,
     Param,
+    ParseIntPipe,
     Patch,
     Post,
 } from '@nestjs/common';
@@ -23,6 +24,7 @@ import {
     ApiTags,
 } from '@nestjs/swagger';
 import { CategoryService } from './category.service';
+import { AddCategoryTagDto } from './dto/add-category-tag.dto';
 import { CategoryDto } from './dto/category.dto';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { PatchCategoryDto } from './dto/patch-category.dto';
@@ -132,5 +134,58 @@ export class CategoryController {
         if (!result) throw new NotFoundException();
 
         return { message: 'Category deleted successfully.' };
+    }
+
+    @Post(':id/tag')
+    @ApiOperation({ summary: 'Add a tag to a category' })
+    @ApiParam({
+        name: 'id',
+        required: true,
+        description: 'The ID of the category to add a tag to',
+    })
+    @ApiBody({
+        description: 'Tag ID to add.',
+        type: AddCategoryTagDto,
+    })
+    @ApiOkResponse({
+        description: 'The tag has been successfully added.',
+        type: CategoryDto,
+    })
+    @ApiNotFoundResponse({ description: 'Category not found.' })
+    async addTag(
+        @Param('id') id: string,
+        @Body() addCategoryTagDto: AddCategoryTagDto,
+    ) {
+        const result = await this.categoryService.addTag(id, addCategoryTagDto);
+        if (!result) throw new NotFoundException();
+
+        return result;
+    }
+
+    @Delete(':id/tag/:tagID')
+    @ApiOperation({ summary: 'Remove a tag from a category' })
+    @ApiParam({
+        name: 'id',
+        required: true,
+        description: 'The ID of the category to remove a tag from',
+    })
+    @ApiParam({
+        name: 'tagID',
+        required: true,
+        description: 'The ID of the tag to remove',
+    })
+    @ApiOkResponse({
+        description: 'The tag has been successfully removed.',
+        type: CategoryDto,
+    })
+    @ApiNotFoundResponse({ description: 'Category not found.' })
+    async removeTag(
+        @Param('id') id: string,
+        @Param('tagID', ParseIntPipe) tagID: number,
+    ) {
+        const result = await this.categoryService.removeTag(id, tagID);
+        if (!result) throw new NotFoundException();
+
+        return result;
     }
 }

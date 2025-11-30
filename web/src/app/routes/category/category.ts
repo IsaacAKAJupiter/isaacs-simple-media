@@ -1,6 +1,7 @@
 import {
   afterNextRender,
   Component,
+  computed,
   effect,
   ElementRef,
   inject,
@@ -17,6 +18,8 @@ import { Subscription } from 'rxjs';
 import {
   CategoriesApi,
   CategoryDto,
+  CategoryTagDto,
+  CategoryTagsApi,
   MediaItemApi,
   MediaItemDto,
 } from '../../../../typescript-axios';
@@ -40,19 +43,27 @@ export class Category implements OnDestroy {
   private masonryLib?: typeof Masonry;
   private imagesOnlyLib?: typeof ImagesLoaded;
 
-  categoryID = signal<string | null>(null);
-  category = signal<CategoryDto | null>(null);
-  mediaItems = signal<MediaItemDto[] | null>(null);
-  selectedMediaItem = signal<MediaItemDto | null>(null);
-  checkedMediaItems = signal<Set<string>>(new Set());
-  otherCategories = signal<CategoryDto[]>([]);
-  otherCategorySelected = signal<string | null>(null);
+  readonly categoryID = signal<string | null>(null);
+  readonly category = signal<CategoryDto | null>(null);
+  readonly mediaItems = signal<MediaItemDto[] | null>(null);
+  readonly selectedMediaItem = signal<MediaItemDto | null>(null);
+  readonly checkedMediaItems = signal<Set<string>>(new Set());
+  readonly otherCategories = signal<CategoryDto[]>([]);
+  readonly otherCategorySelected = signal<string | null>(null);
+  readonly tags = signal<CategoryTagDto[]>([]);
+  readonly tagOptions = computed(() => {
+    const tags = this.tags();
+    const categoryTags = (this.category()?.tags ?? []).map((t) => t.id);
+    return tags.filter((t) => !categoryTags.includes(t.id));
+  });
+  readonly selectedTag = signal<number | null>(null);
   private uploadSuccessSubscription?: Subscription;
   private masonry?: Masonry;
   private imagesLoadedCB = this._imagesLoadedCB.bind(this);
 
   private mediaItemApi?: MediaItemApi;
   private categoriesApi?: CategoriesApi;
+  private categoryTagsApi?: CategoryTagsApi;
 
   private masonryDiv = viewChild<ElementRef<HTMLDivElement>>('masonryDiv');
 
@@ -64,10 +75,12 @@ export class Category implements OnDestroy {
 
       this.mediaItemApi = new MediaItemApi(undefined, this.configService.getBaseURL());
       this.categoriesApi = new CategoriesApi(undefined, this.configService.getBaseURL());
+      this.categoryTagsApi = new CategoryTagsApi(undefined, this.configService.getBaseURL());
 
       this.categoryID.set(this.route.snapshot.paramMap.get('id'));
       this.loadMedia();
       this.loadCategories();
+      this.loadTags();
 
       if (this.categoryID()) {
         this.loadCategoryDetails();
@@ -138,6 +151,13 @@ export class Category implements OnDestroy {
     this.otherCategories.set(
       categoryID ? response.data.filter((c) => c.id !== categoryID) : response.data,
     );
+  }
+
+  async loadTags() {
+    if (!this.categoryTagsApi) return;
+
+    const response = await this.categoryTagsApi.getCategoryTags();
+    this.tags.set(response.data);
   }
 
   async deleteMedia() {
@@ -252,6 +272,54 @@ export class Category implements OnDestroy {
     const items = this.checkedMediaItems();
     items[checked ? 'add' : 'delete'](item.id);
     this.checkedMediaItems.set(items);
+  }
+
+  getOptimalTextColor(colour: string): string {
+    const rgb = colour.replace('#', '');
+    const r = parseInt(rgb.substring(0, 2), 16);
+    const g = parseInt(rgb.substring(2, 4), 16);
+    const b = parseInt(rgb.substring(4, 6), 16);
+    const yiq = (r * 299 + g * 587 + b * 114) / 1000;
+    return yiq >= 128 ? '#000000' : '#FFFFFF';
+  }
+
+  async deleteTag(tag: CategoryTagDto) {
+    if (!this.categoriesApi) return;
+
+    const categoryID = this.categoryID();
+    if (!categoryID) return;
+
+    const result = await this.categoriesApi.removeTag(categoryID, tag.id);
+    if (result.status !== 200) {
+      alert(`Failed deleting tag.`);
+      return;
+    }
+
+    this.category.update((c) =>
+      c ? { ...c, tags: (c.tags ?? []).filter((t) => t.id !== tag.id) } : null,
+    );
+  }
+
+  async addTagToCategory() {
+    if (!this.categoriesApi) return;
+
+    const categoryID = this.categoryID();
+    if (!categoryID) return;
+
+    const tagID = this.selectedTag();
+    if (!tagID) return;
+
+    const tag = this.tags().find((t) => t.id === tagID);
+    if (!tag) return;
+
+    const result = await this.categoriesApi.addTag(categoryID, { tagID });
+    if (result.status !== 201) {
+      alert(`Failed adding tag.`);
+      return;
+    }
+
+    this.category.update((c) => (c ? { ...c, tags: [...(c.tags ?? []), tag] } : null));
+    this.selectedTag.set(null);
   }
 
   private async initMasonry() {

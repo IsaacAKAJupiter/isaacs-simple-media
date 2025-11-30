@@ -3,6 +3,7 @@
 //
 
 // ignore_for_file: unused_element
+import 'package:openapi/src/model/category_tag_dto.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:openapi/src/model/media_item_dto.dart';
 import 'package:built_value/json_object.dart';
@@ -20,6 +21,7 @@ part 'category_dto.g.dart';
 /// * [thumbnail] - Thumbnail media item
 /// * [createdAt] - Creation date of the category
 /// * [updatedAt] - Last update date of the category
+/// * [tags] - Tags associated with the category
 /// * [mediaItems] - List of media items associated with the category
 @BuiltValue()
 abstract class CategoryDto implements Built<CategoryDto, CategoryDtoBuilder> {
@@ -46,6 +48,10 @@ abstract class CategoryDto implements Built<CategoryDto, CategoryDtoBuilder> {
   /// Last update date of the category
   @BuiltValueField(wireName: r'updatedAt')
   DateTime get updatedAt;
+
+  /// Tags associated with the category
+  @BuiltValueField(wireName: r'tags')
+  BuiltList<CategoryTagDto>? get tags;
 
   /// List of media items associated with the category
   @BuiltValueField(wireName: r'mediaItems')
@@ -104,6 +110,13 @@ class _$CategoryDtoSerializer implements PrimitiveSerializer<CategoryDto> {
       object.updatedAt,
       specifiedType: const FullType(DateTime),
     );
+    if (object.tags != null) {
+      yield r'tags';
+      yield serializers.serialize(
+        object.tags,
+        specifiedType: const FullType(BuiltList, [FullType(CategoryTagDto)]),
+      );
+    }
     yield r'mediaItems';
     yield object.mediaItems == null ? null : serializers.serialize(
       object.mediaItems,
@@ -175,6 +188,13 @@ class _$CategoryDtoSerializer implements PrimitiveSerializer<CategoryDto> {
             specifiedType: const FullType(DateTime),
           ) as DateTime;
           result.updatedAt = valueDes;
+          break;
+        case r'tags':
+          final valueDes = serializers.deserialize(
+            value,
+            specifiedType: const FullType(BuiltList, [FullType(CategoryTagDto)]),
+          ) as BuiltList<CategoryTagDto>;
+          result.tags.replace(valueDes);
           break;
         case r'mediaItems':
           final valueDes = serializers.deserialize(

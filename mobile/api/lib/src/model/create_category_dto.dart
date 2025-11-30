@@ -3,6 +3,7 @@
 //
 
 // ignore_for_file: unused_element
+import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 
@@ -14,6 +15,7 @@ part 'create_category_dto.g.dart';
 /// * [name] - The name of the category.
 /// * [description] - The description of the category.
 /// * [thumbnailMediaID] - The media item ID to use for the category.
+/// * [tags] - Array of tag IDs for the category
 @BuiltValue()
 abstract class CreateCategoryDto implements Built<CreateCategoryDto, CreateCategoryDtoBuilder> {
   /// The name of the category.
@@ -27,6 +29,10 @@ abstract class CreateCategoryDto implements Built<CreateCategoryDto, CreateCateg
   /// The media item ID to use for the category.
   @BuiltValueField(wireName: r'thumbnailMediaID')
   String? get thumbnailMediaID;
+
+  /// Array of tag IDs for the category
+  @BuiltValueField(wireName: r'tags')
+  BuiltList<num>? get tags;
 
   CreateCategoryDto._();
 
@@ -68,6 +74,13 @@ class _$CreateCategoryDtoSerializer implements PrimitiveSerializer<CreateCategor
       yield serializers.serialize(
         object.thumbnailMediaID,
         specifiedType: const FullType(String),
+      );
+    }
+    if (object.tags != null) {
+      yield r'tags';
+      yield serializers.serialize(
+        object.tags,
+        specifiedType: const FullType(BuiltList, [FullType(num)]),
       );
     }
   }
@@ -113,6 +126,13 @@ class _$CreateCategoryDtoSerializer implements PrimitiveSerializer<CreateCategor
             specifiedType: const FullType(String),
           ) as String;
           result.thumbnailMediaID = valueDes;
+          break;
+        case r'tags':
+          final valueDes = serializers.deserialize(
+            value,
+            specifiedType: const FullType(BuiltList, [FullType(num)]),
+          ) as BuiltList<num>;
+          result.tags.replace(valueDes);
           break;
         default:
           unhandled.add(key);

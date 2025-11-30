@@ -11,6 +11,7 @@ import {
     PrimaryColumn,
     UpdateDateColumn,
 } from 'typeorm';
+import { CategoryTag } from '../../category-tag/entities/category-tag.entity';
 
 @Entity('categories')
 export class Category {
@@ -49,4 +50,15 @@ export class Category {
         },
     })
     mediaItems: MediaItem[];
+
+    @ManyToMany(() => CategoryTag, (tag) => tag.categories)
+    @JoinTable({
+        name: 'category_tags_categories',
+        joinColumn: { name: 'category_id', referencedColumnName: 'id' },
+        inverseJoinColumn: {
+            name: 'category_tag_id',
+            referencedColumnName: 'id',
+        },
+    })
+    tags: CategoryTag[];
 }

@@ -8,6 +8,7 @@ Name | Type | Description | Notes
 **name** | **string** | The name of the category. | [default to undefined]
 **description** | **string** | The description of the category. | [optional] [default to undefined]
 **thumbnailMediaID** | **string** | The media item ID to use for the category. | [optional] [default to undefined]
+**tags** | **Array&lt;number&gt;** | Array of tag IDs for the category | [optional] [default to undefined]
 
 ## Example
 
@@ -18,6 +19,7 @@ const instance: CreateCategoryDto = {
     name,
     description,
     thumbnailMediaID,
+    tags,
 };
 ```
 

@@ -64,11 +64,16 @@ All URIs are relative to *http://localhost*
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
 [*AppApi*](doc/AppApi.md) | [**health**](doc/AppApi.md#health) | **GET** /health | 
+[*CategoriesApi*](doc/CategoriesApi.md) | [**addTag**](doc/CategoriesApi.md#addtag) | **POST** /category/{id}/tag | Add a tag to a category
 [*CategoriesApi*](doc/CategoriesApi.md) | [**create**](doc/CategoriesApi.md#create) | **POST** /category | Create a new category
 [*CategoriesApi*](doc/CategoriesApi.md) | [**findAll**](doc/CategoriesApi.md#findall) | **GET** /category | Retrieve all categories
 [*CategoriesApi*](doc/CategoriesApi.md) | [**findOne**](doc/CategoriesApi.md#findone) | **GET** /category/{id} | Retrieve a category by ID
 [*CategoriesApi*](doc/CategoriesApi.md) | [**remove**](doc/CategoriesApi.md#remove) | **DELETE** /category/{id} | Delete a category by ID
+[*CategoriesApi*](doc/CategoriesApi.md) | [**removeTag**](doc/CategoriesApi.md#removetag) | **DELETE** /category/{id}/tag/{tagID} | Remove a tag from a category
 [*CategoriesApi*](doc/CategoriesApi.md) | [**update**](doc/CategoriesApi.md#update) | **PATCH** /category/{id} | Update a category by ID
+[*CategoryTagsApi*](doc/CategoryTagsApi.md) | [**createCategoryTag**](doc/CategoryTagsApi.md#createcategorytag) | **POST** /category-tag | Create a new category tag
+[*CategoryTagsApi*](doc/CategoryTagsApi.md) | [**deleteCategoryTag**](doc/CategoryTagsApi.md#deletecategorytag) | **DELETE** /category-tag/{id} | Delete a category tag
+[*CategoryTagsApi*](doc/CategoryTagsApi.md) | [**getCategoryTags**](doc/CategoryTagsApi.md#getcategorytags) | **GET** /category-tag | Get all category tags
 [*JobsApi*](doc/JobsApi.md) | [**triggerOrphanCleanup**](doc/JobsApi.md#triggerorphancleanup) | **POST** /jobs/cleanup-orphans | Manually trigger a scan to find and remove orphaned media records.
 [*JobsApi*](doc/JobsApi.md) | [**triggerOrphanFileCleanup**](doc/JobsApi.md#triggerorphanfilecleanup) | **POST** /jobs/cleanup-orphan-files | Manually trigger a scan to find and remove orphaned files without media records.
 [*MediaItemApi*](doc/MediaItemApi.md) | [**addMediaItemToCategory**](doc/MediaItemApi.md#addmediaitemtocategory) | **POST** /media-item/{id}/category | Add a media item to a category.
@@ -87,10 +92,14 @@ Class | Method | HTTP request | Description
 
 ## Documentation For Models
 
+ - [AddCategoryTagDto](doc/AddCategoryTagDto.md)
  - [AddOrRemoveSingleCategoryDto](doc/AddOrRemoveSingleCategoryDto.md)
  - [CategoryDto](doc/CategoryDto.md)
+ - [CategoryTagDto](doc/CategoryTagDto.md)
  - [CreateCategoryDto](doc/CreateCategoryDto.md)
+ - [CreateCategoryTagDto](doc/CreateCategoryTagDto.md)
  - [MediaItemDto](doc/MediaItemDto.md)
+ - [PatchCategoryDto](doc/PatchCategoryDto.md)
 
 
 ## Documentation For Authorization

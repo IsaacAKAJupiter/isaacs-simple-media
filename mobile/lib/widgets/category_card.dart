@@ -13,6 +13,7 @@ class CategoryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final name = category == null ? 'Uncategorised' : category!.name;
     final description = category?.description?.asString ?? '';
+    final tags = category?.tags?.toList() ?? [];
 
     return Card(
       clipBehavior:
@@ -82,6 +83,34 @@ class CategoryCard extends StatelessWidget {
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
+                        ),
+                      if (tags.isNotEmpty)
+                        Wrap(
+                          spacing: 5.0,
+                          children: tags.map((tag) {
+                            final rawTagColour = tag.colour.isNotEmpty
+                                ? tag.colour
+                                : '#000000';
+                            final tagColour = Color(
+                              int.parse(
+                                    rawTagColour.substring(1, 7),
+                                    radix: 16,
+                                  ) +
+                                  0xFF000000,
+                            );
+                            final isDark = tagColour.computeLuminance() < 0.5;
+                            final textColour = isDark
+                                ? Colors.white
+                                : Colors.black;
+
+                            return Chip(
+                              label: Text(
+                                tag.name,
+                                style: TextStyle(color: textColour),
+                              ),
+                              backgroundColor: tagColour,
+                            );
+                          }).toList(),
                         ),
                     ],
                   ),

@@ -25,5 +25,11 @@ void main() {
       // TODO
     });
 
+    // Array of tags for the category
+    // BuiltList<CategoryTagDto> tags
+    test('to test the property `tags`', () async {
+      // TODO
+    });
+
   });
 }

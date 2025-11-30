@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { diskStorage } from 'multer';
 import { randomUUID } from 'node:crypto';
 import { extname } from 'node:path';
+import { CategoryTag } from 'src/category-tag/entities/category-tag.entity';
 import { CategoryService } from 'src/category/category.service';
 import { Category } from 'src/category/entities/category.entity';
 import { JobsService } from 'src/jobs/jobs.service';
@@ -17,7 +18,7 @@ import { MediaItemService } from './media-item.service';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([MediaItem, Category]),
+        TypeOrmModule.forFeature([MediaItem, Category, CategoryTag]),
         MulterModule.registerAsync({
             inject: [ConfigService],
             useFactory: async (config: ConfigService) => ({
