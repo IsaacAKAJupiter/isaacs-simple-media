@@ -45,6 +45,7 @@ export class Category implements OnDestroy {
 
   readonly categoryID = signal<string | null>(null);
   readonly category = signal<CategoryDto | null>(null);
+  readonly shouldAddToViews = signal<boolean>(false);
   readonly mediaItems = signal<MediaItemDto[] | null>(null);
   readonly selectedMediaItem = signal<MediaItemDto | null>(null);
   readonly checkedMediaItems = signal<Set<string>>(new Set());
@@ -81,6 +82,7 @@ export class Category implements OnDestroy {
       this.loadMedia();
       this.loadCategories();
       this.loadTags();
+      this.loadAddToViews();
 
       if (this.categoryID()) {
         this.loadCategoryDetails();
@@ -266,6 +268,11 @@ export class Category implements OnDestroy {
 
   selectMedia(item: MediaItemDto) {
     this.selectedMediaItem.set(item);
+
+    if (this.shouldAddToViews() && this.mediaItemApi) {
+      this.mediaItemApi.incrementViews(item.id);
+      item.views++;
+    }
   }
 
   toggleItemChecked(item: MediaItemDto, checked: boolean) {
@@ -349,5 +356,11 @@ export class Category implements OnDestroy {
 
   private _imagesLoadedCB() {
     this.masonry?.layout?.();
+  }
+
+  private loadAddToViews() {
+    const value = window.localStorage.getItem('shouldAddToViews');
+    const convertedValue = value === null || value === '1' ? true : false;
+    this.shouldAddToViews.set(convertedValue);
   }
 }

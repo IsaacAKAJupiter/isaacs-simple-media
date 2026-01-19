@@ -11,7 +11,9 @@ Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**addMediaItemToCategory**](MediaItemApi.md#addmediaitemtocategory) | **POST** /media-item/{id}/category | Add a media item to a category.
 [**deleteItem**](MediaItemApi.md#deleteitem) | **DELETE** /media-item/{id} | Fully delete a media item.
+[**findAllMediaItems**](MediaItemApi.md#findallmediaitems) | **GET** /media-item | Get all media items.
 [**getMediaItem**](MediaItemApi.md#getmediaitem) | **GET** /media-item/{id} | Retrieve a media item by ID
+[**incrementViews**](MediaItemApi.md#incrementviews) | **PATCH** /media-item/{id}/views | Increment the view count of a media item.
 [**recycleMediaItem**](MediaItemApi.md#recyclemediaitem) | **PATCH** /media-item/{id}/recycle | Move a media item to the recycle bin (soft delete)
 [**recycledMediaItems**](MediaItemApi.md#recycledmediaitems) | **GET** /media-item/recycled | Get all media items that are in the trash.
 [**removeMediaItemFromCategory**](MediaItemApi.md#removemediaitemfromcategory) | **DELETE** /media-item/{id}/category | Remove a media item from a category.
@@ -103,6 +105,43 @@ No authorization required
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+# **findAllMediaItems**
+> BuiltList<MediaItemDto> findAllMediaItems()
+
+Get all media items.
+
+### Example
+```dart
+import 'package:openapi/api.dart';
+
+final api = Openapi().getMediaItemApi();
+
+try {
+    final response = api.findAllMediaItems();
+    print(response);
+} catch on DioException (e) {
+    print('Exception when calling MediaItemApi->findAllMediaItems: $e\n');
+}
+```
+
+### Parameters
+This endpoint does not need any parameter.
+
+### Return type
+
+[**BuiltList&lt;MediaItemDto&gt;**](MediaItemDto.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 # **getMediaItem**
 > MediaItemDto getMediaItem(id)
 
@@ -128,6 +167,47 @@ try {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **id** | **String**| The ID of the media item to retrieve | 
+
+### Return type
+
+[**MediaItemDto**](MediaItemDto.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **incrementViews**
+> MediaItemDto incrementViews(id)
+
+Increment the view count of a media item.
+
+### Example
+```dart
+import 'package:openapi/api.dart';
+
+final api = Openapi().getMediaItemApi();
+final String id = 38400000-8cf0-11bd-b23e-10b96e4ef00d; // String | The UUID of the media item.
+
+try {
+    final response = api.incrementViews(id);
+    print(response);
+} catch on DioException (e) {
+    print('Exception when calling MediaItemApi->incrementViews: $e\n');
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **id** | **String**| The UUID of the media item. | 
 
 ### Return type
 

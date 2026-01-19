@@ -42,11 +42,17 @@ export class CategoryService {
         });
     }
 
-    findOne(id: string) {
-        return this.categoryRepository.findOne({
+    async findOne(id: string) {
+        const category = await this.categoryRepository.findOne({
             where: { id },
             relations: ['mediaItems', 'thumbnail', 'tags'],
         });
+        if (!category) return null;
+
+        return {
+            ...category,
+            mediaItems: category.mediaItems.sort((a, b) => b.views - a.views),
+        };
     }
 
     async update(id: string, updateCategoryDto: UpdateCategoryDto) {

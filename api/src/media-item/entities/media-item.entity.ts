@@ -43,6 +43,10 @@ export class MediaItem {
     @Index()
     recycledAt: Date | null;
 
+    @Column({ type: 'integer', default: 0 })
+    @Index()
+    views: number;
+
     @ManyToMany(() => Category, (category) => category.mediaItems)
     categories: Category[];
 }

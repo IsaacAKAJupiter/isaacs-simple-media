@@ -17,6 +17,7 @@ Name | Type | Description | Notes
 **thumbnailPath** | [**JsonObject**](.md) | Path to a generated thumbnail for video files. | 
 **createdAt** | [**DateTime**](DateTime.md) |  | 
 **recycledAt** | [**JsonObject**](.md) | If set, the item is considered in the trash. | 
+**views** | **num** | The number of times this media item has been viewed. | 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

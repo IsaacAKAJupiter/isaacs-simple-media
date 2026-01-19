@@ -58,21 +58,7 @@ class _MediaGridRouteState extends State<MediaGridRoute> {
                   key: ValueKey(item.id),
                   item: item,
                   onTap: () {
-                    showGeneralDialog(
-                      context: context,
-                      barrierDismissible: false,
-                      fullscreenDialog: true,
-                      pageBuilder: (_, _, _) {
-                        return MediaViewerRoute(
-                          mediaItems: snapshot.data!,
-                          initialIndex: index,
-                        );
-                      },
-                      transitionBuilder: (ctx, a1, a2, child) {
-                        return FadeTransition(opacity: a1, child: child);
-                      },
-                      transitionDuration: const Duration(milliseconds: 200),
-                    );
+                    _viewMediaItem(context, snapshot, index);
                   },
                 );
               },
@@ -80,6 +66,28 @@ class _MediaGridRouteState extends State<MediaGridRoute> {
           }
         },
       ),
+    );
+  }
+
+  void _viewMediaItem(
+    BuildContext context,
+    AsyncSnapshot<List<MediaItemDto>> snapshot,
+    int index,
+  ) {
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: false,
+      fullscreenDialog: true,
+      pageBuilder: (_, _, _) {
+        return MediaViewerRoute(
+          mediaItems: snapshot.data!,
+          initialIndex: index,
+        );
+      },
+      transitionBuilder: (ctx, a1, a2, child) {
+        return FadeTransition(opacity: a1, child: child);
+      },
+      transitionDuration: const Duration(milliseconds: 200),
     );
   }
 

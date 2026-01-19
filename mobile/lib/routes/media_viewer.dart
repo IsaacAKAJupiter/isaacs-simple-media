@@ -24,6 +24,8 @@ class _MediaViewerRouteState extends State<MediaViewerRoute> {
   late int _currentIndex;
   bool _isZoomed = false;
 
+  final mediaItemsApi = MediaItemApi(ApiConfig.dio(), standardSerializers);
+
   void _onScaleChanged(bool isZoomed) {
     setState(() => _isZoomed = isZoomed);
   }
@@ -33,6 +35,7 @@ class _MediaViewerRouteState extends State<MediaViewerRoute> {
     super.initState();
     _currentIndex = widget.initialIndex;
     _pageController = PageController(initialPage: _currentIndex);
+    _incrementMediaItemViews(_currentIndex);
   }
 
   @override
@@ -61,6 +64,7 @@ class _MediaViewerRouteState extends State<MediaViewerRoute> {
             _currentIndex = index;
             _isZoomed = false;
           });
+          _incrementMediaItemViews(index);
         },
         itemBuilder: (context, index) {
           final item = widget.mediaItems[index];
@@ -91,5 +95,15 @@ class _MediaViewerRouteState extends State<MediaViewerRoute> {
         },
       ),
     );
+  }
+
+  Future<void> _incrementMediaItemViews(int index) async {
+    if (index < 0 || index >= widget.mediaItems.length) return;
+    final item = widget.mediaItems[index];
+    try {
+      await mediaItemsApi.incrementViews(id: item.id);
+    } catch (e) {
+      debugPrint('Error incrementing views for ${item.id}: $e');
+    }
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:isaacs_simple_media_mobile/widgets/custom_chewie_controls.dart';
@@ -23,6 +25,9 @@ class _ZoomableVideoPlayerState extends State<ZoomableVideoPlayer> {
   late VideoPlayerController _videoPlayerController;
   ChewieController? _chewieController;
   late TransformationController _transformationController;
+  bool _displayForwardSeek = false;
+  bool _displayBackwardSeek = false;
+  Timer? _seekTimer;
 
   @override
   void initState() {
@@ -77,7 +82,83 @@ class _ZoomableVideoPlayerState extends State<ZoomableVideoPlayer> {
     _transformationController.dispose();
     _videoPlayerController.dispose();
     _chewieController?.dispose();
+    _seekTimer?.cancel();
     super.dispose();
+  }
+
+  void _seekRelative(int seconds) {
+    if (_chewieController == null) return;
+    final newPosition =
+        _videoPlayerController.value.position + Duration(seconds: seconds);
+    _videoPlayerController.seekTo(newPosition);
+    _showSeekIndicator(seconds > 0);
+  }
+
+  void _showSeekIndicator(bool isForward) {
+    setState(() {
+      if (isForward) {
+        _displayForwardSeek = true;
+        _displayBackwardSeek = false;
+      } else {
+        _displayBackwardSeek = true;
+        _displayForwardSeek = false;
+      }
+    });
+
+    _seekTimer?.cancel();
+    _seekTimer = Timer(const Duration(milliseconds: 500), () {
+      if (mounted) {
+        setState(() {
+          _displayForwardSeek = false;
+          _displayBackwardSeek = false;
+        });
+      }
+    });
+  }
+
+  Widget _buildSeekIndicator(bool isForward) {
+    final isVisible = isForward ? _displayForwardSeek : _displayBackwardSeek;
+    return IgnorePointer(
+      child: AnimatedOpacity(
+        opacity: isVisible ? 1.0 : 0.0,
+        duration: const Duration(milliseconds: 200),
+        child: Align(
+          alignment: isForward ? Alignment.centerRight : Alignment.centerLeft,
+          child: Container(
+            width: MediaQuery.of(context).size.width / 4,
+            height: double.infinity,
+            decoration: BoxDecoration(
+              color: Colors.black26,
+              borderRadius: BorderRadius.horizontal(
+                left: isForward ? const Radius.circular(100) : Radius.zero,
+                right: isForward ? Radius.zero : const Radius.circular(100),
+              ),
+            ),
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    isForward ? Icons.fast_forward : Icons.fast_rewind,
+                    color: Colors.white,
+                    size: 32,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    isForward ? '+5s' : '-5s',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -86,12 +167,27 @@ class _ZoomableVideoPlayerState extends State<ZoomableVideoPlayer> {
       child:
           _chewieController != null &&
               _chewieController!.videoPlayerController.value.isInitialized
-          ? InteractiveViewer(
-              transformationController: _transformationController,
-              panEnabled: true,
-              minScale: 1.0,
-              maxScale: 4.0,
-              child: Chewie(controller: _chewieController!),
+          ? Stack(
+              children: [
+                InteractiveViewer(
+                  transformationController: _transformationController,
+                  panEnabled: true,
+                  minScale: 1.0,
+                  maxScale: 4.0,
+                  child: Chewie(controller: _chewieController!),
+                ),
+                GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onDoubleTapDown: (details) {
+                    final width = MediaQuery.of(context).size.width;
+                    final isForward = details.globalPosition.dx > width / 2;
+                    _seekRelative(isForward ? 5 : -5);
+                  },
+                  onDoubleTap: () {},
+                ),
+                _buildSeekIndicator(false),
+                _buildSeekIndicator(true),
+              ],
             )
           : const Column(
               mainAxisAlignment: MainAxisAlignment.center,

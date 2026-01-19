@@ -25,6 +25,8 @@ class _$MediaItemDto extends MediaItemDto {
   final DateTime createdAt;
   @override
   final JsonObject? recycledAt;
+  @override
+  final num views;
 
   factory _$MediaItemDto([void Function(MediaItemDtoBuilder)? updates]) =>
       (MediaItemDtoBuilder()..update(updates))._build();
@@ -38,7 +40,8 @@ class _$MediaItemDto extends MediaItemDto {
       required this.mediaType,
       this.thumbnailPath,
       required this.createdAt,
-      this.recycledAt})
+      this.recycledAt,
+      required this.views})
       : super._();
   @override
   MediaItemDto rebuild(void Function(MediaItemDtoBuilder) updates) =>
@@ -59,7 +62,8 @@ class _$MediaItemDto extends MediaItemDto {
         mediaType == other.mediaType &&
         thumbnailPath == other.thumbnailPath &&
         createdAt == other.createdAt &&
-        recycledAt == other.recycledAt;
+        recycledAt == other.recycledAt &&
+        views == other.views;
   }
 
   @override
@@ -74,6 +78,7 @@ class _$MediaItemDto extends MediaItemDto {
     _$hash = $jc(_$hash, thumbnailPath.hashCode);
     _$hash = $jc(_$hash, createdAt.hashCode);
     _$hash = $jc(_$hash, recycledAt.hashCode);
+    _$hash = $jc(_$hash, views.hashCode);
     _$hash = $jf(_$hash);
     return _$hash;
   }
@@ -89,7 +94,8 @@ class _$MediaItemDto extends MediaItemDto {
           ..add('mediaType', mediaType)
           ..add('thumbnailPath', thumbnailPath)
           ..add('createdAt', createdAt)
-          ..add('recycledAt', recycledAt))
+          ..add('recycledAt', recycledAt)
+          ..add('views', views))
         .toString();
   }
 }
@@ -135,6 +141,10 @@ class MediaItemDtoBuilder
   JsonObject? get recycledAt => _$this._recycledAt;
   set recycledAt(JsonObject? recycledAt) => _$this._recycledAt = recycledAt;
 
+  num? _views;
+  num? get views => _$this._views;
+  set views(num? views) => _$this._views = views;
+
   MediaItemDtoBuilder() {
     MediaItemDto._defaults(this);
   }
@@ -151,6 +161,7 @@ class MediaItemDtoBuilder
       _thumbnailPath = $v.thumbnailPath;
       _createdAt = $v.createdAt;
       _recycledAt = $v.recycledAt;
+      _views = $v.views;
       _$v = null;
     }
     return this;
@@ -187,6 +198,8 @@ class MediaItemDtoBuilder
           createdAt: BuiltValueNullFieldError.checkNotNull(
               createdAt, r'MediaItemDto', 'createdAt'),
           recycledAt: recycledAt,
+          views: BuiltValueNullFieldError.checkNotNull(
+              views, r'MediaItemDto', 'views'),
         );
     replace(_$result);
     return _$result;

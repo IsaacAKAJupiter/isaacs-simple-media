@@ -6,7 +6,9 @@ All URIs are relative to *http://localhost*
 |------------- | ------------- | -------------|
 |[**addMediaItemToCategory**](#addmediaitemtocategory) | **POST** /media-item/{id}/category | Add a media item to a category.|
 |[**deleteItem**](#deleteitem) | **DELETE** /media-item/{id} | Fully delete a media item.|
+|[**findAllMediaItems**](#findallmediaitems) | **GET** /media-item | Get all media items.|
 |[**getMediaItem**](#getmediaitem) | **GET** /media-item/{id} | Retrieve a media item by ID|
+|[**incrementViews**](#incrementviews) | **PATCH** /media-item/{id}/views | Increment the view count of a media item.|
 |[**recycleMediaItem**](#recyclemediaitem) | **PATCH** /media-item/{id}/recycle | Move a media item to the recycle bin (soft delete)|
 |[**recycledMediaItems**](#recycledmediaitems) | **GET** /media-item/recycled | Get all media items that are in the trash.|
 |[**removeMediaItemFromCategory**](#removemediaitemfromcategory) | **DELETE** /media-item/{id}/category | Remove a media item from a category.|
@@ -129,6 +131,53 @@ No authorization required
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+# **findAllMediaItems**
+> Array<MediaItemDto> findAllMediaItems()
+
+
+### Example
+
+```typescript
+import {
+    MediaItemApi,
+    Configuration
+} from './api';
+
+const configuration = new Configuration();
+const apiInstance = new MediaItemApi(configuration);
+
+const { status, data } = await apiInstance.findAllMediaItems();
+```
+
+### Parameters
+This endpoint does not have any parameters.
+
+
+### Return type
+
+**Array<MediaItemDto>**
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** | A list of media items. |  -  |
+|**500** | Internal server error. |  -  |
+|**502** | Bad gateway. |  -  |
+|**503** | Service unavailable. |  -  |
+|**504** | Gateway timeout. |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 # **getMediaItem**
 > MediaItemDto getMediaItem()
 
@@ -176,6 +225,61 @@ No authorization required
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 |**200** | The media item has been successfully retrieved. |  -  |
+|**404** | Media item not found. |  -  |
+|**500** | Internal server error. |  -  |
+|**502** | Bad gateway. |  -  |
+|**503** | Service unavailable. |  -  |
+|**504** | Gateway timeout. |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **incrementViews**
+> MediaItemDto incrementViews()
+
+
+### Example
+
+```typescript
+import {
+    MediaItemApi,
+    Configuration
+} from './api';
+
+const configuration = new Configuration();
+const apiInstance = new MediaItemApi(configuration);
+
+let id: string; //The UUID of the media item. (default to undefined)
+
+const { status, data } = await apiInstance.incrementViews(
+    id
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **id** | [**string**] | The UUID of the media item. | defaults to undefined|
+
+
+### Return type
+
+**MediaItemDto**
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** | Item views incremented successfully. |  -  |
 |**404** | Media item not found. |  -  |
 |**500** | Internal server error. |  -  |
 |**502** | Bad gateway. |  -  |

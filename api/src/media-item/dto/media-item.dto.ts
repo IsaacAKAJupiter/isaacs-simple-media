@@ -53,4 +53,10 @@ export class MediaItemDto {
         nullable: true,
     })
     recycledAt: Date | null;
+
+    @ApiProperty({
+        example: 123,
+        description: 'The number of times this media item has been viewed.',
+    })
+    views: number;
 }

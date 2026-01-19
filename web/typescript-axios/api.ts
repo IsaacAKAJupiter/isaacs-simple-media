@@ -239,6 +239,12 @@ export interface MediaItemDto {
      * @memberof MediaItemDto
      */
     'recycledAt': object | null;
+    /**
+     * The number of times this media item has been viewed.
+     * @type {number}
+     * @memberof MediaItemDto
+     */
+    'views': number;
 }
 /**
  * 
@@ -1421,6 +1427,36 @@ export const MediaItemApiAxiosParamCreator = function (configuration?: Configura
         },
         /**
          * 
+         * @summary Get all media items.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        findAllMediaItems: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/media-item`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @summary Retrieve a media item by ID
          * @param {string} id The ID of the media item to retrieve
          * @param {*} [options] Override http request option.
@@ -1439,6 +1475,40 @@ export const MediaItemApiAxiosParamCreator = function (configuration?: Configura
             }
 
             const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Increment the view count of a media item.
+         * @param {string} id The UUID of the media item.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        incrementViews: async (id: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('incrementViews', 'id', id)
+            const localVarPath = `/media-item/{id}/views`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -1706,6 +1776,18 @@ export const MediaItemApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary Get all media items.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async findAllMediaItems(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<MediaItemDto>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.findAllMediaItems(options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['MediaItemApi.findAllMediaItems']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
          * @summary Retrieve a media item by ID
          * @param {string} id The ID of the media item to retrieve
          * @param {*} [options] Override http request option.
@@ -1715,6 +1797,19 @@ export const MediaItemApiFp = function(configuration?: Configuration) {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getMediaItem(id, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['MediaItemApi.getMediaItem']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Increment the view count of a media item.
+         * @param {string} id The UUID of the media item.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async incrementViews(id: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MediaItemDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.incrementViews(id, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['MediaItemApi.incrementViews']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
@@ -1828,6 +1923,15 @@ export const MediaItemApiFactory = function (configuration?: Configuration, base
         },
         /**
          * 
+         * @summary Get all media items.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        findAllMediaItems(options?: RawAxiosRequestConfig): AxiosPromise<Array<MediaItemDto>> {
+            return localVarFp.findAllMediaItems(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @summary Retrieve a media item by ID
          * @param {string} id The ID of the media item to retrieve
          * @param {*} [options] Override http request option.
@@ -1835,6 +1939,16 @@ export const MediaItemApiFactory = function (configuration?: Configuration, base
          */
         getMediaItem(id: string, options?: RawAxiosRequestConfig): AxiosPromise<MediaItemDto> {
             return localVarFp.getMediaItem(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Increment the view count of a media item.
+         * @param {string} id The UUID of the media item.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        incrementViews(id: string, options?: RawAxiosRequestConfig): AxiosPromise<MediaItemDto> {
+            return localVarFp.incrementViews(id, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -1933,6 +2047,17 @@ export class MediaItemApi extends BaseAPI {
 
     /**
      * 
+     * @summary Get all media items.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof MediaItemApi
+     */
+    public findAllMediaItems(options?: RawAxiosRequestConfig) {
+        return MediaItemApiFp(this.configuration).findAllMediaItems(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
      * @summary Retrieve a media item by ID
      * @param {string} id The ID of the media item to retrieve
      * @param {*} [options] Override http request option.
@@ -1941,6 +2066,18 @@ export class MediaItemApi extends BaseAPI {
      */
     public getMediaItem(id: string, options?: RawAxiosRequestConfig) {
         return MediaItemApiFp(this.configuration).getMediaItem(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Increment the view count of a media item.
+     * @param {string} id The UUID of the media item.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof MediaItemApi
+     */
+    public incrementViews(id: string, options?: RawAxiosRequestConfig) {
+        return MediaItemApiFp(this.configuration).incrementViews(id, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

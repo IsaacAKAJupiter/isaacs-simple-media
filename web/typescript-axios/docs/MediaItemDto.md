@@ -14,6 +14,7 @@ Name | Type | Description | Notes
 **thumbnailPath** | **object** | Path to a generated thumbnail for video files. | [default to undefined]
 **createdAt** | **string** |  | [default to undefined]
 **recycledAt** | **object** | If set, the item is considered in the trash. | [default to undefined]
+**views** | **number** | The number of times this media item has been viewed. | [default to undefined]
 
 ## Example
 
@@ -30,6 +31,7 @@ const instance: MediaItemDto = {
     thumbnailPath,
     createdAt,
     recycledAt,
+    views,
 };
 ```
 

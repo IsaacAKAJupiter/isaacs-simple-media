@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:isaacs_simple_media_mobile/api_config.dart';
+import 'package:isaacs_simple_media_mobile/routes/media_viewer.dart';
 import 'package:isaacs_simple_media_mobile/routes/provision.dart';
 import 'package:isaacs_simple_media_mobile/widgets/category_card.dart';
 import 'package:openapi/openapi.dart';
@@ -20,6 +21,7 @@ class _CategoriesRouteState extends State<CategoriesRoute> {
 
   final categoriesApi = CategoriesApi(ApiConfig.dio(), standardSerializers);
   final categoryTagsApi = CategoryTagsApi(ApiConfig.dio(), standardSerializers);
+  final mediaItemApi = MediaItemApi(ApiConfig.dio(), standardSerializers);
 
   @override
   void initState() {
@@ -69,7 +71,7 @@ class _CategoriesRouteState extends State<CategoriesRoute> {
                 await _getCategoryTags();
               },
               child: ListView.builder(
-                itemCount: filteredCategories.length + 3,
+                itemCount: filteredCategories.length + 4,
                 itemBuilder: (context, index) {
                   if (index == 0) {
                     return buildTags();
@@ -80,10 +82,14 @@ class _CategoriesRouteState extends State<CategoriesRoute> {
                   }
 
                   if (index == 2) {
+                    return buildShuffleAllButton();
+                  }
+
+                  if (index == 3) {
                     return CategoryCard(category: null);
                   }
 
-                  final category = filteredCategories[index - 3];
+                  final category = filteredCategories[index - 4];
                   return CategoryCard(category: category);
                 },
               ),
@@ -105,6 +111,20 @@ class _CategoriesRouteState extends State<CategoriesRoute> {
           setState(() {});
           _filterCategories();
         },
+      ),
+    );
+  }
+
+  Padding buildShuffleAllButton() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        ),
+        onPressed: _shuffleAll,
+        child: const Text('Shuffle All'),
       ),
     );
   }
@@ -175,5 +195,49 @@ class _CategoriesRouteState extends State<CategoriesRoute> {
     final response = await categoryTagsApi.getCategoryTags();
     categoryTags = response.data?.toList() ?? [];
     setState(() {});
+  }
+
+  Future<void> _shuffleAll() async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(child: CircularProgressIndicator()),
+    );
+
+    try {
+      final response = await mediaItemApi.findAllMediaItems();
+      final items = response.data?.toList() ?? [];
+
+      if (items.isEmpty) {
+        if (mounted) Navigator.of(context).pop();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No media items to shuffle')),
+        );
+        return;
+      }
+
+      items.shuffle();
+
+      if (mounted) {
+        Navigator.of(context).pop();
+        showGeneralDialog(
+          context: context,
+          barrierDismissible: false,
+          fullscreenDialog: true,
+          pageBuilder: (_, _, _) {
+            return MediaViewerRoute(mediaItems: items, initialIndex: 0);
+          },
+          transitionBuilder: (ctx, a1, a2, child) {
+            return FadeTransition(opacity: a1, child: child);
+          },
+          transitionDuration: const Duration(milliseconds: 200),
+        );
+      }
+    } catch (e) {
+      if (mounted) Navigator.of(context).pop();
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error fetching media: $e')));
+    }
   }
 }

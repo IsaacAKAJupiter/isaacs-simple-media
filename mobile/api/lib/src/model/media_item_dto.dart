@@ -21,6 +21,7 @@ part 'media_item_dto.g.dart';
 /// * [thumbnailPath] - Path to a generated thumbnail for video files.
 /// * [createdAt] 
 /// * [recycledAt] - If set, the item is considered in the trash.
+/// * [views] - The number of times this media item has been viewed.
 @BuiltValue()
 abstract class MediaItemDto implements Built<MediaItemDto, MediaItemDtoBuilder> {
   /// The unique identifier for the media item.
@@ -57,6 +58,10 @@ abstract class MediaItemDto implements Built<MediaItemDto, MediaItemDtoBuilder> 
   /// If set, the item is considered in the trash.
   @BuiltValueField(wireName: r'recycledAt')
   JsonObject? get recycledAt;
+
+  /// The number of times this media item has been viewed.
+  @BuiltValueField(wireName: r'views')
+  num get views;
 
   MediaItemDto._();
 
@@ -125,6 +130,11 @@ class _$MediaItemDtoSerializer implements PrimitiveSerializer<MediaItemDto> {
     yield object.recycledAt == null ? null : serializers.serialize(
       object.recycledAt,
       specifiedType: const FullType.nullable(JsonObject),
+    );
+    yield r'views';
+    yield serializers.serialize(
+      object.views,
+      specifiedType: const FullType(num),
     );
   }
 
@@ -213,6 +223,13 @@ class _$MediaItemDtoSerializer implements PrimitiveSerializer<MediaItemDto> {
           ) as JsonObject?;
           if (valueDes == null) continue;
           result.recycledAt = valueDes;
+          break;
+        case r'views':
+          final valueDes = serializers.deserialize(
+            value,
+            specifiedType: const FullType(num),
+          ) as num;
+          result.views = valueDes;
           break;
         default:
           unhandled.add(key);

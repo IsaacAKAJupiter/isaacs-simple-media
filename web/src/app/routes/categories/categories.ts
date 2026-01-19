@@ -15,11 +15,12 @@ import {
   CategoryTagDto,
   CategoryTagsApi,
 } from '../../../../typescript-axios';
+import { IsmSwitch } from '../../components/ism-switch/ism-switch';
 import { ConfigService } from '../../services/config';
 
 @Component({
   selector: 'app-categories',
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink, IsmSwitch],
   templateUrl: './categories.html',
   styleUrl: './categories.css',
 })
@@ -34,6 +35,7 @@ export class Categories {
   readonly categoryTags = signal<CategoryTagDto[] | null>(null);
   readonly newCategoryTagName = signal<string>('');
   readonly newCategoryTagColour = signal<string>('');
+  readonly shouldAddToViews = signal<boolean>(true);
   readonly selectedCategoryTags = signal<number[]>([]);
   readonly filter = signal<string>('');
   readonly filteredCategories = computed(() => {
@@ -75,6 +77,7 @@ export class Categories {
       this.categoryTagsApi = new CategoryTagsApi(undefined, this.configService.getBaseURL());
       this.loadCategories();
       this.loadCategoryTags();
+      this.loadAddToViews();
     });
   }
 
@@ -190,5 +193,21 @@ export class Categories {
     const b = parseInt(rgb.substring(4, 6), 16);
     const yiq = (r * 299 + g * 587 + b * 114) / 1000;
     return yiq >= 128 ? '#000000' : '#FFFFFF';
+  }
+
+  setAddToViews(value: boolean) {
+    this.shouldAddToViews.set(value);
+
+    const convertedValue = value ? '1' : '0';
+    const oldValue = window.localStorage.getItem('shouldAddToViews');
+    if (oldValue !== convertedValue) {
+      window.localStorage.setItem('shouldAddToViews', convertedValue);
+    }
+  }
+
+  loadAddToViews() {
+    const value = window.localStorage.getItem('shouldAddToViews');
+    const convertedValue = value === null || value === '1' ? true : false;
+    this.shouldAddToViews.set(convertedValue);
   }
 }

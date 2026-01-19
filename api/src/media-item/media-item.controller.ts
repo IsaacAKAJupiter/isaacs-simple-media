@@ -37,6 +37,19 @@ import { MediaItemService } from './media-item.service';
 export class MediaItemController {
     constructor(private readonly mediaService: MediaItemService) {}
 
+    @Get()
+    @ApiOperation({
+        operationId: 'findAllMediaItems',
+        summary: 'Get all media items.',
+    })
+    @ApiOkResponse({
+        description: 'A list of media items.',
+        type: [MediaItemDto],
+    })
+    findAll() {
+        return this.mediaService.findAll();
+    }
+
     @Get('uncategorised')
     @ApiOperation({
         summary: 'Get all media items that are not in any categories.',
@@ -50,7 +63,9 @@ export class MediaItemController {
     }
 
     @Get('recycled')
-    @ApiOperation({ summary: 'Get all media items that are in the trash.' })
+    @ApiOperation({
+        summary: 'Get all media items that are in the trash.',
+    })
     @ApiOkResponse({
         description: 'A list of media items.',
         type: [MediaItemDto],
@@ -206,6 +221,23 @@ export class MediaItemController {
         @Body() body: AddOrRemoveSingleCategoryDto,
     ) {
         return this.mediaService.removeFromCategory(id, body.categoryID);
+    }
+
+    @Patch(':id/views')
+    @ApiOperation({ summary: 'Increment the view count of a media item.' })
+    @ApiParam({
+        name: 'id',
+        type: 'string',
+        format: 'uuid',
+        description: 'The UUID of the media item.',
+    })
+    @ApiOkResponse({
+        description: 'Item views incremented successfully.',
+        type: MediaItemDto,
+    })
+    @ApiNotFoundResponse({ description: 'Media item not found.' })
+    incrementViews(@Param('id', ParseUUIDPipe) id: string) {
+        return this.mediaService.incrementViews(id);
     }
 
     @Patch(':id/recycle')

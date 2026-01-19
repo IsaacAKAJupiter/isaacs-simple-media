@@ -42,13 +42,21 @@ export class MediaItemService {
         });
     }
 
-    async uncategorisedMediaItems(): Promise<MediaItem[]> {
+    uncategorisedMediaItems(): Promise<MediaItem[]> {
         return this.mediaItemRepository
             .createQueryBuilder('mediaItem')
             .leftJoin('mediaItem.categories', 'category')
             .where('category.id IS NULL')
             .andWhere('mediaItem.recycledAt IS NULL')
+            .orderBy('mediaItem.views', 'DESC')
             .getMany();
+    }
+
+    findAll(includeRecycled: boolean = false): Promise<MediaItem[]> {
+        return this.mediaItemRepository.find({
+            where: includeRecycled ? {} : { recycledAt: IsNull() },
+            relations: ['categories'],
+        });
     }
 
     recycledMediaItems(): Promise<MediaItem[]> {
@@ -97,6 +105,14 @@ export class MediaItemService {
         }
 
         item.categories.splice(index, 1);
+        return this.mediaItemRepository.save(item);
+    }
+
+    async incrementViews(id: string) {
+        const item = await this.mediaItemRepository.findOneBy({ id });
+        if (!item) throw new NotFoundException();
+
+        item.views++;
         return this.mediaItemRepository.save(item);
     }
 

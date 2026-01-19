@@ -78,7 +78,9 @@ Class | Method | HTTP request | Description
 [*JobsApi*](doc/JobsApi.md) | [**triggerOrphanFileCleanup**](doc/JobsApi.md#triggerorphanfilecleanup) | **POST** /jobs/cleanup-orphan-files | Manually trigger a scan to find and remove orphaned files without media records.
 [*MediaItemApi*](doc/MediaItemApi.md) | [**addMediaItemToCategory**](doc/MediaItemApi.md#addmediaitemtocategory) | **POST** /media-item/{id}/category | Add a media item to a category.
 [*MediaItemApi*](doc/MediaItemApi.md) | [**deleteItem**](doc/MediaItemApi.md#deleteitem) | **DELETE** /media-item/{id} | Fully delete a media item.
+[*MediaItemApi*](doc/MediaItemApi.md) | [**findAllMediaItems**](doc/MediaItemApi.md#findallmediaitems) | **GET** /media-item | Get all media items.
 [*MediaItemApi*](doc/MediaItemApi.md) | [**getMediaItem**](doc/MediaItemApi.md#getmediaitem) | **GET** /media-item/{id} | Retrieve a media item by ID
+[*MediaItemApi*](doc/MediaItemApi.md) | [**incrementViews**](doc/MediaItemApi.md#incrementviews) | **PATCH** /media-item/{id}/views | Increment the view count of a media item.
 [*MediaItemApi*](doc/MediaItemApi.md) | [**recycleMediaItem**](doc/MediaItemApi.md#recyclemediaitem) | **PATCH** /media-item/{id}/recycle | Move a media item to the recycle bin (soft delete)
 [*MediaItemApi*](doc/MediaItemApi.md) | [**recycledMediaItems**](doc/MediaItemApi.md#recycledmediaitems) | **GET** /media-item/recycled | Get all media items that are in the trash.
 [*MediaItemApi*](doc/MediaItemApi.md) | [**removeMediaItemFromCategory**](doc/MediaItemApi.md#removemediaitemfromcategory) | **DELETE** /media-item/{id}/category | Remove a media item from a category.
