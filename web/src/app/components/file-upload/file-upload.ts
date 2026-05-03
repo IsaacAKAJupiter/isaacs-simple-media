@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UploadService } from '../../services/upload';
@@ -6,15 +5,15 @@ import { UploadService } from '../../services/upload';
 @Component({
   selector: 'app-file-upload',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './file-upload.html',
   styleUrl: './file-upload.css',
 })
 export class FileUpload {
   private readonly uploadService = inject(UploadService);
 
-  isDragOver = signal<boolean>(false);
-  categoryID = signal<string | null>(null);
+  readonly isDragOver = signal<boolean>(false);
+  readonly categoryID = signal<string | null>(null);
 
   constructor(private route: ActivatedRoute) {
     this.route.paramMap.subscribe((params) => {
