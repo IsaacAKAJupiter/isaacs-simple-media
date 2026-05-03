@@ -38,14 +38,30 @@ export class CategoryService {
 
     findAll() {
         return this.categoryRepository.find({
-            relations: ['thumbnail', 'tags', 'mediaItems'],
+            relations: {
+                mediaItems: {
+                    categories: {
+                        thumbnail: true,
+                    },
+                },
+                thumbnail: true,
+                tags: true,
+            },
         });
     }
 
     async findOne(id: string) {
         const category = await this.categoryRepository.findOne({
             where: { id },
-            relations: ['mediaItems', 'thumbnail', 'tags'],
+            relations: {
+                mediaItems: {
+                    categories: {
+                        thumbnail: true,
+                    },
+                },
+                thumbnail: true,
+                tags: true,
+            },
         });
         if (!category) return null;
 

@@ -4,7 +4,7 @@ import { BehaviorSubject, combineLatest, map, Observable } from 'rxjs';
 import { Upload, UploadService } from '../../services/upload';
 
 @Component({
-  selector: 'app-upload-progress',
+  selector: 'upload-progress',
   imports: [AsyncPipe, NgClass],
   templateUrl: './upload-progress.html',
   styleUrl: './upload-progress.css',

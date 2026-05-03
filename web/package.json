@@ -1,11 +1,13 @@
 {
   "name": "web",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "license": "MIT",
   "author": "Isaac",
   "scripts": {
     "ng": "ng",
+    "prestart": "node set-version.js",
     "start": "ng serve",
+    "prebuild": "node set-version.js",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
