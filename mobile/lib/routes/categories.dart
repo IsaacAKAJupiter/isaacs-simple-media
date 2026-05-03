@@ -225,7 +225,12 @@ class _CategoriesRouteState extends State<CategoriesRoute> {
           barrierDismissible: false,
           fullscreenDialog: true,
           pageBuilder: (_, _, _) {
-            return MediaViewerRoute(mediaItems: items, initialIndex: 0);
+            return MediaViewerRoute(
+              mediaItems: items,
+              initialIndex: 0,
+              ignoreIncrementViews: true,
+              showCategoryInfo: true,
+            );
           },
           transitionBuilder: (ctx, a1, a2, child) {
             return FadeTransition(opacity: a1, child: child);

@@ -34,7 +34,12 @@ class _MediaGridRouteState extends State<MediaGridRoute> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.title)),
+      appBar: AppBar(
+        title: Text(widget.title),
+        actions: [
+          IconButton(icon: const Icon(Icons.shuffle), onPressed: _shuffle),
+        ],
+      ),
       body: FutureBuilder<List<MediaItemDto>>(
         future: futureMediaItems,
         builder: (context, snapshot) {
@@ -82,6 +87,31 @@ class _MediaGridRouteState extends State<MediaGridRoute> {
         return MediaViewerRoute(
           mediaItems: snapshot.data!,
           initialIndex: index,
+          showCategoryInfo: true,
+        );
+      },
+      transitionBuilder: (ctx, a1, a2, child) {
+        return FadeTransition(opacity: a1, child: child);
+      },
+      transitionDuration: const Duration(milliseconds: 200),
+    );
+  }
+
+  void _shuffle() async {
+    final items = await futureMediaItems;
+    if (items.isEmpty || !mounted) return;
+    final shuffledItems = List<MediaItemDto>.from(items)..shuffle();
+
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: false,
+      fullscreenDialog: true,
+      pageBuilder: (_, _, _) {
+        return MediaViewerRoute(
+          mediaItems: shuffledItems,
+          initialIndex: 0,
+          ignoreIncrementViews: true,
+          showCategoryInfo: true,
         );
       },
       transitionBuilder: (ctx, a1, a2, child) {

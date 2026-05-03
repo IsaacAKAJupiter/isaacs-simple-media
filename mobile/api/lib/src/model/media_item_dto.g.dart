@@ -27,6 +27,8 @@ class _$MediaItemDto extends MediaItemDto {
   final JsonObject? recycledAt;
   @override
   final num views;
+  @override
+  final BuiltList<CategoryDto> categories;
 
   factory _$MediaItemDto([void Function(MediaItemDtoBuilder)? updates]) =>
       (MediaItemDtoBuilder()..update(updates))._build();
@@ -41,7 +43,8 @@ class _$MediaItemDto extends MediaItemDto {
       this.thumbnailPath,
       required this.createdAt,
       this.recycledAt,
-      required this.views})
+      required this.views,
+      required this.categories})
       : super._();
   @override
   MediaItemDto rebuild(void Function(MediaItemDtoBuilder) updates) =>
@@ -145,6 +148,12 @@ class MediaItemDtoBuilder
   num? get views => _$this._views;
   set views(num? views) => _$this._views = views;
 
+  ListBuilder<CategoryDto>? _categories;
+  ListBuilder<CategoryDto> get categories =>
+      _$this._categories ??= ListBuilder<CategoryDto>();
+  set categories(ListBuilder<CategoryDto>? categories) =>
+      _$this._categories = categories;
+
   MediaItemDtoBuilder() {
     MediaItemDto._defaults(this);
   }
@@ -162,6 +171,7 @@ class MediaItemDtoBuilder
       _createdAt = $v.createdAt;
       _recycledAt = $v.recycledAt;
       _views = $v.views;
+      _categories = $v.categories.toBuilder();
       _$v = null;
     }
     return this;
@@ -200,6 +210,7 @@ class MediaItemDtoBuilder
           recycledAt: recycledAt,
           views: BuiltValueNullFieldError.checkNotNull(
               views, r'MediaItemDto', 'views'),
+          categories: _categories?.build() ?? BuiltList<CategoryDto>(),
         );
     replace(_$result);
     return _$result;

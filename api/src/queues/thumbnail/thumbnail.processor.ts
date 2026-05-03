@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { Job } from 'bullmq';
 import { mkdir } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
+import { MediaItem } from 'src/media-item/entities/media-item.entity';
 import { WorkerHostProcessor } from '../worker-host.process';
 
 @Injectable()
@@ -14,7 +15,7 @@ export class ThumbnailProcessor extends WorkerHostProcessor {
     }
 
     async process(job: Job, _token?: string): Promise<any> {
-        const item = job.data;
+        const item = job.data as MediaItem;
         const inputPath = join(
             this.configService.get('UPLOAD_DIRECTORY')!,
             `${item.id}.${item.extension}`,
@@ -44,8 +45,9 @@ export class ThumbnailProcessor extends WorkerHostProcessor {
             await this.runSpawnCommand(command, args);
             return true;
         } catch (error) {
-            throw new InternalServerErrorException(error.message);
-            // TODO: Handle the error, maybe update the DB record to a 'failed' state.
+            throw new InternalServerErrorException(
+                error instanceof Error ? error.message : String(error),
+            );
         }
     }
 }

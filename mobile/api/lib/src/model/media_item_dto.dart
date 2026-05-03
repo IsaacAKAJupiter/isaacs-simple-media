@@ -3,6 +3,8 @@
 //
 
 // ignore_for_file: unused_element
+import 'package:built_collection/built_collection.dart';
+import 'package:openapi/src/model/category_dto.dart';
 import 'package:built_value/json_object.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
@@ -22,6 +24,7 @@ part 'media_item_dto.g.dart';
 /// * [createdAt] 
 /// * [recycledAt] - If set, the item is considered in the trash.
 /// * [views] - The number of times this media item has been viewed.
+/// * [categories] - The categories this media item belongs to.
 @BuiltValue()
 abstract class MediaItemDto implements Built<MediaItemDto, MediaItemDtoBuilder> {
   /// The unique identifier for the media item.
@@ -62,6 +65,10 @@ abstract class MediaItemDto implements Built<MediaItemDto, MediaItemDtoBuilder> 
   /// The number of times this media item has been viewed.
   @BuiltValueField(wireName: r'views')
   num get views;
+
+  /// The categories this media item belongs to.
+  @BuiltValueField(wireName: r'categories')
+  BuiltList<CategoryDto> get categories;
 
   MediaItemDto._();
 
@@ -135,6 +142,11 @@ class _$MediaItemDtoSerializer implements PrimitiveSerializer<MediaItemDto> {
     yield serializers.serialize(
       object.views,
       specifiedType: const FullType(num),
+    );
+    yield r'categories';
+    yield serializers.serialize(
+      object.categories,
+      specifiedType: const FullType(BuiltList, [FullType(CategoryDto)]),
     );
   }
 
@@ -230,6 +242,13 @@ class _$MediaItemDtoSerializer implements PrimitiveSerializer<MediaItemDto> {
             specifiedType: const FullType(num),
           ) as num;
           result.views = valueDes;
+          break;
+        case r'categories':
+          final valueDes = serializers.deserialize(
+            value,
+            specifiedType: const FullType(BuiltList, [FullType(CategoryDto)]),
+          ) as BuiltList<CategoryDto>;
+          result.categories.replace(valueDes);
           break;
         default:
           unhandled.add(key);

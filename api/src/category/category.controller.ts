@@ -53,7 +53,8 @@ export class CategoryController {
                 await this.categoryService.create(createCategoryDto);
             return category;
         } catch (e) {
-            throw new InternalServerErrorException(e.message);
+            const message = e instanceof Error ? e.message : `${e}`;
+            throw new InternalServerErrorException(message);
         }
     }
 
@@ -110,11 +111,12 @@ export class CategoryController {
             );
             return updatedCategory;
         } catch (error) {
-            if (error.message === 'Category not found.') {
+            const message = error instanceof Error ? error.message : `${error}`;
+            if (message === 'Category not found.') {
                 throw new NotFoundException();
             }
 
-            throw new BadRequestException(error.message);
+            throw new BadRequestException(message);
         }
     }
 

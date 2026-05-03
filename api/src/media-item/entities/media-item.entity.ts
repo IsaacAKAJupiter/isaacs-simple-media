@@ -11,42 +11,42 @@ import {
 @Entity('media_items')
 export class MediaItem {
     @PrimaryColumn('uuid')
-    id: string;
+    id!: string;
 
     @Column({ name: 'file_name' })
     @Index()
-    fileName: string;
+    fileName!: string;
 
     @Column({ name: 'content_hash' })
     @Index()
-    contentHash: string;
+    contentHash!: string;
 
     @Column({ name: 'media_type' })
     @Index()
-    mediaType: string;
+    mediaType!: string;
 
     @Column()
     @Index()
-    extension: string;
+    extension!: string;
 
     @Column({ type: 'integer' })
     @Index()
-    size: number;
+    size!: number;
 
     @Column({ name: 'thumbnail_path', type: 'varchar', nullable: true })
-    thumbnailPath: string | null;
+    thumbnailPath!: string | null;
 
     @CreateDateColumn({ name: 'created_at' })
-    createdAt: Date;
+    createdAt!: Date;
 
     @Column({ name: 'recycled_at', type: 'datetime', nullable: true })
     @Index()
-    recycledAt: Date | null;
+    recycledAt!: Date | null;
 
     @Column({ type: 'integer', default: 0 })
     @Index()
-    views: number;
+    views!: number;
 
     @ManyToMany(() => Category, (category) => category.mediaItems)
-    categories: Category[];
+    categories!: Category[];
 }

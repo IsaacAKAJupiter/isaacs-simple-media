@@ -16,8 +16,7 @@ class CategoryCard extends StatelessWidget {
     final tags = category?.tags?.toList() ?? [];
 
     return Card(
-      clipBehavior:
-          Clip.antiAlias, // Ensures the image respects the rounded corners
+      clipBehavior: Clip.antiAlias,
       margin: const EdgeInsets.symmetric(vertical: 8.0),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
       child: InkWell(
@@ -32,7 +31,6 @@ class CategoryCard extends StatelessWidget {
         },
         child: Stack(
           children: [
-            // Thumbnail and placeholder section
             AspectRatio(
               aspectRatio: 16 / 9,
               child: Container(
@@ -40,7 +38,6 @@ class CategoryCard extends StatelessWidget {
                 child: _buildThumbnail(category?.thumbnail),
               ),
             ),
-            // Gradient overlay and text section
             Positioned.fill(
               child: Container(
                 decoration: BoxDecoration(

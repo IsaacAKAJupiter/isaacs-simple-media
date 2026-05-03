@@ -16,29 +16,29 @@ import { CategoryTag } from '../../category-tag/entities/category-tag.entity';
 @Entity('categories')
 export class Category {
     @PrimaryColumn('uuid')
-    id: string;
+    id!: string;
 
     @Column()
     @Index()
-    name: string;
+    name!: string;
 
     @Column({ type: 'text', nullable: true })
-    description: string | null;
+    description!: string | null;
 
     @OneToOne(() => MediaItem, {
         nullable: true,
         onDelete: 'SET NULL',
     })
     @JoinColumn({ name: 'thumbnail_media_id' })
-    thumbnail: MediaItem;
+    thumbnail!: MediaItem;
 
     @CreateDateColumn({ name: 'created_at' })
     @Index()
-    createdAt: Date;
+    createdAt!: Date;
 
     @UpdateDateColumn({ name: 'updated_at' })
     @Index()
-    updatedAt: Date;
+    updatedAt!: Date;
 
     @ManyToMany(() => MediaItem, (mediaItem) => mediaItem.categories)
     @JoinTable({
@@ -49,7 +49,7 @@ export class Category {
             referencedColumnName: 'id',
         },
     })
-    mediaItems: MediaItem[];
+    mediaItems!: MediaItem[];
 
     @ManyToMany(() => CategoryTag, (tag) => tag.categories)
     @JoinTable({
@@ -60,5 +60,5 @@ export class Category {
             referencedColumnName: 'id',
         },
     })
-    tags: CategoryTag[];
+    tags!: CategoryTag[];
 }

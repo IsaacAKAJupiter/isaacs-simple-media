@@ -2,6 +2,7 @@ import {
     BadRequestException,
     Injectable,
     NotFoundException,
+    OnApplicationBootstrap,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -23,7 +24,7 @@ import {
 } from './inject-queue.decorator';
 
 @Injectable()
-export class MediaItemService {
+export class MediaItemService implements OnApplicationBootstrap {
     constructor(
         @InjectRepository(MediaItem)
         private readonly mediaItemRepository: Repository<MediaItem>,
@@ -38,7 +39,11 @@ export class MediaItemService {
     findOne(id: string): Promise<MediaItem | null> {
         return this.mediaItemRepository.findOne({
             where: { id },
-            relations: ['categories'],
+            relations: {
+                categories: {
+                    thumbnail: true,
+                },
+            },
         });
     }
 
@@ -55,7 +60,11 @@ export class MediaItemService {
     findAll(includeRecycled: boolean = false): Promise<MediaItem[]> {
         return this.mediaItemRepository.find({
             where: includeRecycled ? {} : { recycledAt: IsNull() },
-            relations: ['categories'],
+            relations: {
+                categories: {
+                    thumbnail: true,
+                },
+            },
         });
     }
 
@@ -213,9 +222,6 @@ export class MediaItemService {
                 savedItem.mediaType === 'image/gif'
             ) {
                 await this.thumbnailQueue.add('thumbnail', savedItem);
-            }
-
-            if (savedItem.mediaType.startsWith('video/')) {
                 await this.transcodeQueue.add('transcode', savedItem);
             }
 
@@ -224,7 +230,10 @@ export class MediaItemService {
                 mediaItem: savedItem,
             };
         } catch (e) {
-            return { result: 'error', message: e.message };
+            return {
+                result: 'error',
+                message: e instanceof Error ? e.message : `${e}`,
+            };
         }
     }
 
@@ -258,5 +267,34 @@ export class MediaItemService {
             },
             deleteOnFail: false,
         });
+    }
+
+    async onApplicationBootstrap() {
+        try {
+            const result = await this.queueExistingGifs();
+            if (result) {
+                console.log(`[Startup Migration] ${result.message}`);
+            }
+        } catch (error) {
+            console.error(
+                '[Startup Migration] Failed to queue existing GIFs:',
+                error,
+            );
+        }
+    }
+
+    async queueExistingGifs() {
+        const existingGifs = await this.mediaItemRepository.find({
+            where: { mediaType: 'image/gif' },
+        });
+        if (existingGifs.length === 0) return;
+
+        for (const gif of existingGifs) {
+            await this.transcodeQueue.add('transcode', gif);
+        }
+
+        return {
+            message: `Queued ${existingGifs.length} existing GIFs for transcoding.`,
+        };
     }
 }

@@ -22,7 +22,9 @@
         "migration:generate": "npm run typeorm -- migration:generate",
         "migration:run": "npm run typeorm -- migration:run",
         "migration:revert": "npm run typeorm -- migration:revert",
-        "ogc": "openapi-generator-cli"
+        "ogc": "openapi-generator-cli",
+        "ogc:web": "npm run ogc -- generate -i http://localhost:3333/swagger.json -g typescript-axios -o ../web/typescript-axios --generate-alias-as-model",
+        "ogc:mobile": "npm run ogc -- generate -i http://localhost:3333/swagger.json -g dart-dio -o ../mobile/api --generate-alias-as-model"
     },
     "dependencies": {
         "@nestjs/bullmq": "^11.0.3",
@@ -33,7 +35,7 @@
         "@nestjs/platform-express": "^11.0.1",
         "@nestjs/schedule": "^6.0.0",
         "@nestjs/swagger": "^11.2.0",
-        "@nestjs/typeorm": "^11.0.0",
+        "@nestjs/typeorm": "^11.0.1",
         "better-sqlite3": "^11.10.0",
         "bullmq": "^5.58.0",
         "chokidar": "^4.0.3",
@@ -53,7 +55,7 @@
         "@nestjs/cli": "^11.0.0",
         "@nestjs/schematics": "^11.0.0",
         "@nestjs/testing": "^11.0.1",
-        "@openapitools/openapi-generator-cli": "^2.22.0",
+        "@openapitools/openapi-generator-cli": "^2.32.0",
         "@types/express": "^5.0.0",
         "@types/fs-extra": "^11.0.4",
         "@types/jest": "^30.0.0",

@@ -18,6 +18,7 @@ Name | Type | Description | Notes
 **createdAt** | [**DateTime**](DateTime.md) |  | 
 **recycledAt** | [**JsonObject**](.md) | If set, the item is considered in the trash. | 
 **views** | **num** | The number of times this media item has been viewed. | 
+**categories** | [**BuiltList&lt;CategoryDto&gt;**](CategoryDto.md) | The categories this media item belongs to. | 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

@@ -245,6 +245,12 @@ export interface MediaItemDto {
      * @memberof MediaItemDto
      */
     'views': number;
+    /**
+     * The categories this media item belongs to.
+     * @type {Array<CategoryDto>}
+     * @memberof MediaItemDto
+     */
+    'categories': Array<CategoryDto>;
 }
 /**
  * 

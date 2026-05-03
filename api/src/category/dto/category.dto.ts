@@ -9,30 +9,30 @@ export class CategoryDto {
         type: String,
     })
     @IsUUID()
-    id: string;
+    id!: string;
 
     @ApiProperty({ description: 'Name of the category' })
     @IsString()
-    name: string;
+    name!: string;
 
     @ApiProperty({ description: 'Description of the category', nullable: true })
     @IsOptional()
     @IsString()
-    description: string | null;
+    description!: string | null;
 
     @ApiProperty({
         description: 'Thumbnail media item',
-        type: MediaItemDto,
+        type: () => MediaItemDto,
         nullable: true,
     })
     @IsOptional()
-    thumbnail: MediaItemDto | null;
+    thumbnail!: MediaItemDto | null;
 
     @ApiProperty({ description: 'Creation date of the category' })
-    createdAt: Date;
+    createdAt!: Date;
 
     @ApiProperty({ description: 'Last update date of the category' })
-    updatedAt: Date;
+    updatedAt!: Date;
 
     @ApiProperty({
         description: 'Tags associated with the category',
@@ -44,9 +44,9 @@ export class CategoryDto {
 
     @ApiProperty({
         description: 'List of media items associated with the category',
-        type: [MediaItemDto],
+        type: () => [MediaItemDto],
         nullable: true,
     })
     @IsOptional()
-    mediaItems: MediaItemDto[] | null;
+    mediaItems!: MediaItemDto[] | null;
 }

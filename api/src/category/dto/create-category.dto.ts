@@ -8,7 +8,7 @@ export class CreateCategoryDto {
         example: 'My Category',
     })
     @IsString()
-    name: string;
+    name!: string;
 
     @ApiPropertyOptional({
         type: String,
@@ -17,7 +17,7 @@ export class CreateCategoryDto {
     })
     @IsOptional()
     @IsString()
-    readonly description: string;
+    readonly description?: string;
 
     @ApiPropertyOptional({
         type: String,
@@ -26,7 +26,7 @@ export class CreateCategoryDto {
     })
     @IsOptional()
     @IsString()
-    readonly thumbnailMediaID: string;
+    readonly thumbnailMediaID?: string;
 
     @ApiPropertyOptional({
         type: [Number],

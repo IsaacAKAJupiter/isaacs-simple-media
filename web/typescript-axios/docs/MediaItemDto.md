@@ -15,6 +15,7 @@ Name | Type | Description | Notes
 **createdAt** | **string** |  | [default to undefined]
 **recycledAt** | **object** | If set, the item is considered in the trash. | [default to undefined]
 **views** | **number** | The number of times this media item has been viewed. | [default to undefined]
+**categories** | [**Array&lt;CategoryDto&gt;**](CategoryDto.md) | The categories this media item belongs to. | [default to undefined]
 
 ## Example
 
@@ -32,6 +33,7 @@ const instance: MediaItemDto = {
     createdAt,
     recycledAt,
     views,
+    categories,
 };
 ```
 
