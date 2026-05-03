@@ -13,7 +13,7 @@ export class Provision {
   private readonly router = inject(Router);
   private readonly configService = inject(ConfigService);
 
-  apiURL = signal<string>('');
+  readonly apiURL = signal<string>('');
 
   constructor() {
     afterNextRender(() => {

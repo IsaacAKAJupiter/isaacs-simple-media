@@ -34,6 +34,8 @@ services:
             - '3334:3334'
         environment:
             - PORT=3334
+            - ALLOWED_HOSTS=http://localhost:3334,http://localhost:3333 # Can be ALLOWED_HOSTS or ALLOWED_HOST, both are supported for flexibility. Used for Angular SSR.
+            - ALLOWED_HOST=http://localhost:3334
         networks:
             - ism_internal
         depends_on:

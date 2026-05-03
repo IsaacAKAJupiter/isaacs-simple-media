@@ -9,8 +9,14 @@ import { join } from 'node:path';
 
 const browserDistFolder = join(import.meta.dirname, '../browser');
 
+const allowedHosts = process.env['ALLOWED_HOSTS']
+  ? process.env['ALLOWED_HOSTS'].split(',').map((host) => host.trim())
+  : process.env['ALLOWED_HOST']
+    ? [process.env['ALLOWED_HOST']]
+    : [];
+
 const app = express();
-const angularApp = new AngularNodeAppEngine();
+const angularApp = new AngularNodeAppEngine({ trustProxyHeaders: true, allowedHosts });
 
 /**
  * Example Express Rest API endpoints can be defined here.
