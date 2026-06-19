@@ -1,0 +1,62 @@
+name: Find MSVC runtime DLLs (Windows)
+
+on:
+    workflow_dispatch:
+    push:
+
+jobs:
+    scan:
+        runs-on: windows-latest
+        steps:
+            - name: Checkout (optional)
+              uses: actions/checkout@v4
+
+            - name: Find target DLLs on disk
+              shell: pwsh
+              run: |
+                  $targets = @(
+                    "vcruntime140.dll",
+                    "vcruntime140_1.dll",
+                    "msvcp140.dll",
+                    "msvcp140_1.dll",
+                    "msvcp140_2.dll"
+                  )
+
+                  # Locations to search (expand/adjust as needed)
+                  $searchRoots = @(
+                    "C:\Windows\System32",
+                    "C:\Windows\SysWOW64",
+                    "C:\Program Files",
+                    "C:\Program Files (x86)"
+                  )
+
+                  Write-Host "=== Searching for target DLLs ==="
+                  foreach ($t in $targets) {
+                    Write-Host "`n--- Results for $t ---"
+                    $found = @()
+
+                    foreach ($root in $searchRoots) {
+                      if (-not (Test-Path $root)) { continue }
+
+                      # Use -Filter on the filename to keep it fast-ish.
+                      # -ErrorAction SilentlyContinue avoids access errors.
+                      $paths = Get-ChildItem -Path $root -Filter $t -Recurse -File -ErrorAction SilentlyContinue |
+                               Select-Object -ExpandProperty FullName
+
+                      if ($paths) {
+                        $found += $paths
+                      }
+                    }
+
+                    $found = $found | Sort-Object -Unique
+                    if ($found.Count -eq 0) {
+                      Write-Host "NOT FOUND"
+                    } else {
+                      $found | ForEach-Object { Write-Host $_ }
+                    }
+                  }
+
+            - name: List latest build artifacts (optional)
+              shell: pwsh
+              run: |
+                  Write-Host "`nJob finished. Copy DLLs from the printed paths."
